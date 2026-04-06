@@ -1,5 +1,5 @@
 let SUPABASE_URL = 'https://ldrrkdaznmiomqdoxaom.supabase.co';
-let SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZvYWd5a2FrYXBveGl5Y2JheGJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3MDQ3MjQsImV4cCI6MjA5MDI4MDcyNH0.MuAYGdHy5aQb2xLHsnb2NrP5P5QNUtPR9IPUgdUclJM';
+let SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxkcnJrZGF6bm1pb21xZG94YW9tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0MTY5NjksImV4cCI6MjA5MDk5Mjk2OX0.jrZ9box4sp46-o1jbk_Atr8VrodQ7v_sccpPw-rB2NY';
 
 // لا تكتب let supabase هنا لأن المكتبة عرفتها مسبقاً في index.html
 // فقط سنقوم بتعديل القيمة بالأسفل
