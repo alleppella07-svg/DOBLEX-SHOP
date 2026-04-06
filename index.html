@@ -564,9 +564,14 @@ let SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSI
 
 // ======= دالة الربط =======
 function initSupabase() {
+  // نستخدم القيم المعرفة في الأعلى مباشرة لتجنب تضارب الذاكرة
   if (SUPABASE_URL && SUPABASE_KEY) {
     try {
-      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      // سطر مهم: التأكد من عدم وجود مسافات زائدة في المفتاح
+      const cleanKey = SUPABASE_KEY.trim();
+      const cleanUrl = SUPABASE_URL.trim();
+      
+      supabase = window.supabase.createClient(cleanUrl, cleanKey);
       console.log('✅ Supabase connected');
       return true;
     } catch (e) {
