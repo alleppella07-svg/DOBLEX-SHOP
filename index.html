@@ -1,332 +1,1008 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>SOBLEX SHOP</title>
-  <link rel="stylesheet" href="style.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SOBLEX SHOP | متجر رقمي</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    /* ======= VARIABLES ======= */
+    :root {
+      --bg: #0a0a0f;
+      --bg2: #111118;
+      --bg3: #18181f;
+      --sidebar-bg: #0d0d14;
+      --accent: #5865f2;
+      --accent2: #7289da;
+      --green: #57f287;
+      --yellow: #fee75c;
+      --red: #ed4245;
+      --text: #e8e8f0;
+      --muted: #7b7b9a;
+      --border: rgba(88,101,242,0.18);
+      --glow: rgba(88,101,242,0.25);
+      --card-bg: #13131c;
+      --sidebar-w: 260px;
+      --radius: 12px;
+      --font: 'Cairo', sans-serif;
+      --mono: 'Space Mono', monospace;
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      min-height: 100vh;
+    }
+
+    /* ======= NOTIFICATION BADGE ======= */
+    .notif-container {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      z-index: 1000;
+    }
+    .notif-bell {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1.5rem;
+      position: relative;
+      transition: all 0.2s;
+    }
+    .notif-bell:hover {
+      border-color: var(--accent);
+      transform: scale(1.05);
+    }
+    .notif-badge {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background: var(--red);
+      color: white;
+      font-size: 0.7rem;
+      font-weight: bold;
+      min-width: 20px;
+      height: 20px;
+      border-radius: 20px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--mono);
+      padding: 0 5px;
+    }
+    .notif-dropdown {
+      position: absolute;
+      bottom: 60px;
+      left: 0;
+      width: 300px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      display: none;
+      flex-direction: column;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    .notif-dropdown.open {
+      display: flex;
+    }
+    .notif-item {
+      padding: 12px;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .notif-item:hover {
+      background: var(--bg3);
+    }
+    .notif-item.unread {
+      background: rgba(88,101,242,0.15);
+      border-right: 3px solid var(--accent);
+    }
+    .notif-time {
+      font-size: 0.7rem;
+      color: var(--muted);
+      margin-top: 5px;
+    }
+
+    /* ======= RAINBOW EFFECT ======= */
+    .rainbow-text {
+      background: linear-gradient(90deg, #ff0000, #ff7700, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: rainbow 3s linear infinite;
+    }
+    .rainbow-border {
+      border: 2px solid transparent;
+      background: linear-gradient(90deg, #ff0000, #ff7700, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3) border-box;
+      -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      animation: border-rotate 2s linear infinite;
+    }
+    @keyframes rainbow {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 100% 50%; }
+    }
+    @keyframes border-rotate {
+      0% { background-position: 0% 0%; }
+      100% { background-position: 200% 0%; }
+    }
+
+    /* ======= LOADER ======= */
+    .loader-screen {
+      position: fixed; inset: 0;
+      background: var(--bg);
+      z-index: 9999;
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column;
+    }
+    .loader-logo {
+      font-family: var(--mono);
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.2em;
+    }
+    .loader-bar {
+      width: 200px;
+      height: 3px;
+      background: var(--bg3);
+      border-radius: 99px;
+      margin-top: 1rem;
+      overflow: hidden;
+    }
+    .loader-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent), var(--green));
+      animation: fill 2s ease-out forwards;
+    }
+    @keyframes fill { to { width: 100%; } }
+
+    /* ======= SIDEBAR ======= */
+    .sidebar {
+      position: fixed;
+      top: 0; right: 0;
+      width: var(--sidebar-w);
+      height: 100vh;
+      background: var(--sidebar-bg);
+      border-left: 1px solid var(--border);
+      z-index: 100;
+      overflow-y: auto;
+      transform: translateX(0);
+      transition: transform 0.3s;
+    }
+    .sidebar-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar-logo {
+      font-family: var(--mono);
+      font-size: 1.3rem;
+      font-weight: 700;
+    }
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      padding: 0.7rem 1.2rem;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+    .nav-link:hover, .nav-link.active {
+      background: rgba(88,101,242,0.12);
+      color: var(--text);
+    }
+    .nav-category-label {
+      font-size: 0.7rem;
+      color: var(--muted);
+      padding: 0.8rem 1.2rem 0.3rem;
+      text-transform: uppercase;
+    }
+
+    /* ======= MAIN ======= */
+    .main-content {
+      margin-right: var(--sidebar-w);
+      padding: 2rem;
+    }
+    .page { display: none; }
+    .page.active { display: block; }
+
+    /* ======= HERO ======= */
+    .hero {
+      padding: 3rem 0;
+      text-align: center;
+    }
+    .hero h1 {
+      font-size: 3rem;
+      font-family: var(--mono);
+    }
+    .hero h1 span { color: var(--accent); }
+
+    /* ======= PRODUCTS GRID ======= */
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1.2rem;
+    }
+    .product-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: all 0.2s;
+    }
+    .product-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-3px);
+    }
+    .product-card-img {
+      width: 100%;
+      height: 140px;
+      background: var(--bg3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .product-card-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .product-card-body {
+      padding: 1rem;
+    }
+    .product-card-name {
+      font-weight: 700;
+      margin-bottom: 0.3rem;
+    }
+    .product-card-price {
+      color: var(--green);
+      font-family: var(--mono);
+      font-size: 1rem;
+    }
+    .btn-order {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 0.4rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 0.5rem;
+    }
+
+    /* ======= MODALS ======= */
+    .modal-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.8);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      width: 90%;
+      max-width: 500px;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    .input-field {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      padding: 0.7rem;
+      border-radius: 8px;
+      color: var(--text);
+      width: 100%;
+      margin: 0.5rem 0;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 0.7rem;
+      border-radius: 8px;
+      width: 100%;
+      cursor: pointer;
+    }
+    .stars-row {
+      display: flex;
+      gap: 0.3rem;
+      font-size: 1.8rem;
+      direction: ltr;
+      justify-content: center;
+      margin: 0.5rem 0;
+    }
+    .star {
+      cursor: pointer;
+      color: var(--muted);
+    }
+    .star.active { color: var(--yellow); }
+    .admin-item {
+      background: var(--bg3);
+      padding: 0.7rem;
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .btn-delete {
+      background: var(--red);
+      color: white;
+      border: none;
+      padding: 0.3rem 0.7rem;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .admin-tab {
+      background: var(--bg3);
+      border: none;
+      color: var(--text);
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .admin-tab.active {
+      background: var(--accent);
+    }
+    .admin-panel { display: none; }
+    .admin-panel:first-of-type { display: block; }
+    .social-btn {
+      background: var(--bg3);
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      color: var(--text);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(100%);
+      }
+      .sidebar.open {
+        transform: translateX(0);
+      }
+      .main-content {
+        margin-right: 0;
+        padding: 1rem;
+      }
+    }
+  </style>
 </head>
 <body>
 
-<!-- ======= LOADER / IP SCREEN ======= -->
-<div id="loader" class="loader-screen">
-  <div class="loader-box">
-    <div class="loader-logo">SOBLEX</div>
-    <div class="loader-text">جاري تحديد جهازك...</div>
-    <div class="loader-ip" id="loader-ip">──────────</div>
-    <div class="loader-bar"><div class="loader-fill"></div></div>
-  </div>
+<div class="loader-screen" id="loader">
+  <div class="loader-logo">SOBLEX</div>
+  <div class="loader-bar"><div class="loader-fill"></div></div>
+  <div style="margin-top: 1rem; font-size: 0.8rem; color: var(--muted)">جاري التحميل...</div>
 </div>
 
-<!-- ======= SIDEBAR ======= -->
-<aside class="sidebar" id="sidebar">
+<div class="sidebar" id="sidebar">
   <div class="sidebar-header">
-    <span class="sidebar-logo">SOBLEX<span class="shop-tag">SHOP</span></span>
+    <div class="sidebar-logo">SOBLEX<span style="color:var(--accent)">SHOP</span></div>
   </div>
-
-  <nav class="sidebar-nav">
-    <!-- العروض والخصومات -->
-    <div class="nav-section special">
-      <a class="nav-link badge-link" href="#" data-page="offers">
-        <span class="icon">🔥</span> العروض
-        <span class="badge new-badge">NEW</span>
-      </a>
-      <a class="nav-link badge-link" href="#" data-page="discounts">
-        <span class="icon">💸</span> الخصومات
-        <span class="badge new-badge">NEW</span>
-      </a>
-    </div>
-
-    <div class="nav-divider"></div>
-
-    <!-- المتجر -->
-    <div class="nav-category-label">▾ المتجر</div>
-
-    <a class="nav-link badge-link" href="#" data-page="servers">
-      <span class="icon">#</span> سيرفرات
-      <span class="badge new-badge">NEW</span>
-    </a>
-    <a class="nav-link badge-link" href="#" data-page="boosts">
-      <span class="icon">#</span> بوستات
-      <span class="badge new-badge">NEW</span>
-    </a>
-    <a class="nav-link badge-link" href="#" data-page="nitro9">
-      <span class="icon">#</span> النيترو9
-      <span class="badge new-badge">NEW</span>
-    </a>
-    <a class="nav-link badge-link" href="#" data-page="gifts">
-      <span class="icon">#</span> الفزات
-      <span class="badge new-badge">NEW</span>
-    </a>
-    <a class="nav-link badge-link" href="#" data-page="apps">
-      <span class="icon">#</span> التطبيقات
-      <span class="badge new-badge">NEW</span>
-    </a>
-    <a class="nav-link badge-link" href="#" data-page="wallets">
-      <span class="icon">#</span> مواقع
-      <span class="badge new-badge">NEW</span>
-    </a>
-    <a class="nav-link badge-link" href="#" data-page="vouchers">
-      <span class="icon">#</span> بوزرات
-      <span class="badge new-badge">NEW</span>
-    </a>
-
-    <div class="nav-divider"></div>
-
-    <a class="nav-link" href="#" data-page="about">
-      <span class="icon">👾</span> عننا
-    </a>
-
-    <div class="nav-divider"></div>
-
-    <!-- Admin -->
-    <a class="nav-link admin-link" href="#" id="open-admin-btn">
-      <span class="icon">⚙️</span> لوحة التحكم
-    </a>
-  </nav>
-
-  <div class="sidebar-footer">
-    <span class="user-ip" id="sidebar-ip">IP: ──────</span>
-  </div>
-</aside>
-
-<!-- ======= MOBILE TOPBAR ======= -->
-<div class="topbar-mobile">
-  <button class="menu-toggle" id="menu-toggle">☰</button>
-  <span class="topbar-logo">SOBLEX<span class="shop-tag">SHOP</span></span>
+  <div class="nav-category-label">الرئيسية</div>
+  <a class="nav-link active" data-page="home">🏠 الرئيسية</a>
+  <a class="nav-link" data-page="offers">🔥 عروض خاصة</a>
+  <a class="nav-link" data-page="discounts">💰 خصومات</a>
+  <div class="nav-category-label">المنتجات</div>
+  <a class="nav-link" data-page="servers">🖥️ سيرفرات</a>
+  <a class="nav-link" data-page="boosts">⚡ بوستات</a>
+  <a class="nav-link" data-page="nitro9">🎮 نايترو 9</a>
+  <a class="nav-link" data-page="gifts">🎁 هدايا</a>
+  <a class="nav-link" data-page="apps">📱 تطبيقات</a>
+  <a class="nav-link" data-page="wallets">👛 محافظ</a>
+  <a class="nav-link" data-page="vouchers">🎫 فاوتشرات</a>
+  <div class="nav-category-label">المزيد</div>
+  <a class="nav-link" data-page="about">ℹ️ عن الموقع</a>
+  <a class="nav-link" id="open-admin-btn">👑 لوحة التحكم</a>
 </div>
 
-<!-- ======= MAIN CONTENT ======= -->
-<main class="main-content" id="main-content">
-
-  <!-- HOME -->
-  <section class="page active" id="page-home">
+<div class="main-content" id="main-content">
+  <div class="page active" id="page-home">
     <div class="hero">
-      <div class="hero-text">
-        <h1>SOBLEX<br/><span>SHOP</span></h1>
-        <p>متجرك الرقمي الأول</p>
+      <h1>SOBLEX <span>SHOP</span></h1>
+      <p style="color:var(--muted); margin-top: 0.5rem">أسرع متجر رقمي لتلبية احتياجاتك</p>
+    </div>
+    <div style="display: flex; gap: 1rem; justify-content: center; margin-bottom: 2rem;">
+      <div style="background: var(--card-bg); padding: 1rem; border-radius: var(--radius); text-align: center;">
+        <div id="stat-products" style="font-size: 2rem; font-family: var(--mono); color: var(--accent);">0</div>
+        <div style="font-size: 0.8rem; color: var(--muted)">منتج</div>
       </div>
-      <div class="hero-glow"></div>
-    </div>
-    <div class="stats-row">
-      <div class="stat-card"><div class="stat-num" id="stat-products">0</div><div class="stat-label">منتج</div></div>
-      <div class="stat-card"><div class="stat-num" id="stat-orders">0</div><div class="stat-label">طلب</div></div>
-      <div class="stat-card"><div class="stat-num" id="stat-reviews">0</div><div class="stat-label">تقييم</div></div>
-    </div>
-  </section>
-
-  <!-- OFFERS -->
-  <section class="page" id="page-offers">
-    <div class="page-header"><h2><span class="icon">🔥</span> العروض</h2></div>
-    <div class="products-grid" id="grid-offers"></div>
-    <div class="empty-state">لا توجد عروض حالياً</div>
-  </section>
-
-  <!-- DISCOUNTS -->
-  <section class="page" id="page-discounts">
-    <div class="page-header"><h2><span class="icon">💸</span> الخصومات</h2></div>
-    <div class="products-grid" id="grid-discounts"></div>
-    <div class="empty-state">لا توجد خصومات حالياً</div>
-  </section>
-
-  <!-- SERVERS -->
-  <section class="page" id="page-servers">
-    <div class="page-header"><h2><span class="icon">#</span> سيرفرات</h2></div>
-    <div class="products-grid" id="grid-servers"></div>
-    <div class="empty-state">لا توجد منتجات حالياً</div>
-  </section>
-
-  <!-- BOOSTS -->
-  <section class="page" id="page-boosts">
-    <div class="page-header"><h2><span class="icon">#</span> بوستات</h2></div>
-    <div class="products-grid" id="grid-boosts"></div>
-    <div class="empty-state">لا توجد منتجات حالياً</div>
-  </section>
-
-  <!-- NITRO9 -->
-  <section class="page" id="page-nitro9">
-    <div class="page-header"><h2><span class="icon">#</span> النيترو9</h2></div>
-    <div class="products-grid" id="grid-nitro9"></div>
-    <div class="empty-state">لا توجد منتجات حالياً</div>
-  </section>
-
-  <!-- GIFTS -->
-  <section class="page" id="page-gifts">
-    <div class="page-header"><h2><span class="icon">#</span> الفزات</h2></div>
-    <div class="products-grid" id="grid-gifts"></div>
-    <div class="empty-state">لا توجد منتجات حالياً</div>
-  </section>
-
-  <!-- APPS -->
-  <section class="page" id="page-apps">
-    <div class="page-header"><h2><span class="icon">#</span> التطبيقات</h2></div>
-    <div class="products-grid" id="grid-apps"></div>
-    <div class="empty-state">لا توجد منتجات حالياً</div>
-  </section>
-
-  <!-- WALLETS -->
-  <section class="page" id="page-wallets">
-    <div class="page-header"><h2><span class="icon">#</span> مواقع</h2></div>
-    <div class="products-grid" id="grid-wallets"></div>
-    <div class="empty-state">لا توجد منتجات حالياً</div>
-  </section>
-
-  <!-- VOUCHERS -->
-  <section class="page" id="page-vouchers">
-    <div class="page-header"><h2><span class="icon">#</span> بوزرات</h2></div>
-    <div class="products-grid" id="grid-vouchers"></div>
-    <div class="empty-state">لا توجد منتجات حالياً</div>
-  </section>
-
-  <!-- ABOUT -->
-  <section class="page" id="page-about">
-    <div class="page-header"><h2>👾 عننا</h2></div>
-    <div class="about-content" id="about-content">
-      <div class="about-box">
-        <p id="about-text">جاري التحميل...</p>
+      <div style="background: var(--card-bg); padding: 1rem; border-radius: var(--radius); text-align: center;">
+        <div id="stat-orders" style="font-size: 2rem; font-family: var(--mono); color: var(--accent);">0</div>
+        <div style="font-size: 0.8rem; color: var(--muted)">طلب</div>
       </div>
-      <div class="socials-grid" id="socials-grid"></div>
+      <div style="background: var(--card-bg); padding: 1rem; border-radius: var(--radius); text-align: center;">
+        <div id="stat-reviews" style="font-size: 2rem; font-family: var(--mono); color: var(--accent);">0</div>
+        <div style="font-size: 0.8rem; color: var(--muted)">تقييم</div>
+      </div>
     </div>
-  </section>
+  </div>
 
-</main>
+  <div class="page" id="page-offers"><div class="page-header"><h2>🔥 عروض خاصة</h2></div><div class="products-grid" id="grid-offers"></div></div>
+  <div class="page" id="page-discounts"><div class="page-header"><h2 class="rainbow-text">💰 خصومات محدودة</h2></div><div class="products-grid" id="grid-discounts"></div></div>
+  <div class="page" id="page-servers"><div class="page-header"><h2>🖥️ سيرفرات</h2></div><div class="products-grid" id="grid-servers"></div></div>
+  <div class="page" id="page-boosts"><div class="page-header"><h2>⚡ بوستات</h2></div><div class="products-grid" id="grid-boosts"></div></div>
+  <div class="page" id="page-nitro9"><div class="page-header"><h2>🎮 نايترو 9</h2></div><div class="products-grid" id="grid-nitro9"></div></div>
+  <div class="page" id="page-gifts"><div class="page-header"><h2>🎁 هدايا</h2></div><div class="products-grid" id="grid-gifts"></div></div>
+  <div class="page" id="page-apps"><div class="page-header"><h2>📱 تطبيقات</h2></div><div class="products-grid" id="grid-apps"></div></div>
+  <div class="page" id="page-wallets"><div class="page-header"><h2>👛 محافظ</h2></div><div class="products-grid" id="grid-wallets"></div></div>
+  <div class="page" id="page-vouchers"><div class="page-header"><h2>🎫 فاوتشرات</h2></div><div class="products-grid" id="grid-vouchers"></div></div>
+  <div class="page" id="page-about">
+    <div class="page-header"><h2>ℹ️ عن الموقع</h2></div>
+    <div id="about-text" style="background: var(--card-bg); padding: 1.5rem; border-radius: var(--radius); line-height: 1.8;"></div>
+    <div id="socials-grid" style="display: flex; gap: 0.8rem; flex-wrap: wrap; margin-top: 1.5rem;"></div>
+  </div>
+</div>
 
-<!-- ======= ADMIN MODAL ======= -->
+<div class="notif-container">
+  <div class="notif-bell" id="notif-bell">
+    🔔
+    <span class="notif-badge" id="notif-badge"></span>
+  </div>
+  <div class="notif-dropdown" id="notif-dropdown"></div>
+</div>
+
+<!-- MODALS -->
 <div class="modal-overlay" id="admin-overlay">
-  <div class="modal admin-modal">
-    <button class="modal-close" id="close-admin">✕</button>
-    <h2 class="modal-title">⚙️ لوحة التحكم</h2>
-
-    <!-- Admin Login -->
+  <div class="modal">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <h3>👑 لوحة التحكم</h3>
+      <button id="close-admin" style="background: none; border: none; color: var(--muted); font-size: 1.5rem; cursor: pointer;">✖</button>
+    </div>
     <div id="admin-login-view">
-      <p style="color:var(--muted);margin-bottom:1rem;">أدخل كلمة مرور الأدمن</p>
-      <input type="password" id="admin-password-input" class="input-field" placeholder="كلمة المرور"/>
-      <button class="btn-primary" id="admin-login-btn" onclick="adminLogin()">دخول</button>
-      <div id="admin-login-error" class="error-msg"></div>
+      <input type="password" id="admin-password-input" class="input-field" placeholder="كلمة المرور">
+      <button class="btn-primary" onclick="adminLogin()">دخول</button>
+      <div id="admin-login-error" style="color: var(--red); margin-top: 0.5rem;"></div>
     </div>
-
-    <!-- Admin Dashboard -->
-    <div id="admin-dashboard" style="display:none">
-      <div class="admin-tabs">
-        <button class="admin-tab active" onclick="adminTab('products')">المنتجات</button>
-        <button class="admin-tab" onclick="adminTab('orders')">الطلبات</button>
-        <button class="admin-tab" onclick="adminTab('reviews')">التقييمات</button>
-        <button class="admin-tab" onclick="adminTab('about')">عننا</button>
-        <button class="admin-tab" onclick="adminTab('settings')">الإعدادات</button>
+    <div id="admin-dashboard" style="display: none;">
+      <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;">
+        <button class="admin-tab active" onclick="adminTab('products')">📦 المنتجات</button>
+        <button class="admin-tab" onclick="adminTab('orders')">🛍️ الطلبات</button>
+        <button class="admin-tab" onclick="adminTab('reviews')">⭐ التقييمات</button>
+        <button class="admin-tab" onclick="adminTab('socials')">🔗 الروابط</button>
+        <button class="admin-tab" onclick="adminTab('settings')">⚙️ الإعدادات</button>
       </div>
-
-      <!-- Products Tab -->
-      <div class="admin-panel" id="panel-products">
-        <h3>إضافة منتج جديد</h3>
-        <div class="admin-form">
-          <select id="prod-category" class="input-field">
-            <option value="offers">العروض</option>
-            <option value="discounts">الخصومات</option>
-            <option value="servers">سيرفرات</option>
-            <option value="boosts">بوستات</option>
-            <option value="nitro9">النيترو9</option>
-            <option value="gifts">الفزات</option>
-            <option value="apps">التطبيقات</option>
-            <option value="wallets">مواقع</option>
-            <option value="vouchers">بوزرات</option>
-          </select>
-          <input type="text" id="prod-name" class="input-field" placeholder="اسم المنتج"/>
-          <input type="text" id="prod-price" class="input-field" placeholder="السعر (مثال: 5 ريال)"/>
-          <textarea id="prod-desc" class="input-field" placeholder="الوصف" rows="3"></textarea>
-          <input type="text" id="prod-image" class="input-field" placeholder="رابط الصورة (اختياري)"/>
-          <button class="btn-primary" onclick="addProduct()">➕ إضافة</button>
-        </div>
-        <div class="admin-divider"></div>
-        <h3>المنتجات الحالية</h3>
-        <div id="admin-products-list" class="admin-list"></div>
+      <div id="panel-products" class="admin-panel">
+        <h3>➕ إضافة منتج</h3>
+        <select id="prod-category" class="input-field">
+          <option value="offers">عروض خاصة</option><option value="discounts">خصومات</option><option value="servers">سيرفرات</option>
+          <option value="boosts">بوستات</option><option value="nitro9">نايترو 9</option><option value="gifts">هدايا</option>
+          <option value="apps">تطبيقات</option><option value="wallets">محافظ</option><option value="vouchers">فاوتشرات</option>
+        </select>
+        <input type="text" id="prod-name" class="input-field" placeholder="اسم المنتج">
+        <input type="text" id="prod-price" class="input-field" placeholder="السعر">
+        <textarea id="prod-desc" class="input-field" placeholder="وصف المنتج"></textarea>
+        <input type="file" id="prod-image-file" class="input-field" accept="image/*">
+        <div id="image-preview" style="margin: 0.5rem 0;"></div>
+        <button class="btn-primary" onclick="addProduct()">➕ إضافة</button>
+        <div style="margin: 1rem 0;"><h3>📋 المنتجات الحالية</h3></div>
+        <div id="admin-products-list"></div>
       </div>
-
-      <!-- Orders Tab -->
-      <div class="admin-panel" id="panel-orders" style="display:none">
-        <h3>الطلبات</h3>
-        <div id="admin-orders-list" class="admin-list"></div>
+      <div id="panel-orders" class="admin-panel" style="display: none;"><div id="admin-orders-list"></div></div>
+      <div id="panel-reviews" class="admin-panel" style="display: none;"><div id="admin-reviews-list"></div></div>
+      <div id="panel-socials" class="admin-panel" style="display: none;">
+        <input type="text" id="social-name" class="input-field" placeholder="الاسم">
+        <input type="text" id="social-url" class="input-field" placeholder="الرابط">
+        <input type="text" id="social-icon" class="input-field" placeholder="الأيقونة">
+        <button class="btn-primary" onclick="addSocial()">➕ إضافة رابط</button>
+        <div id="socials-list" style="margin-top: 1rem;"></div>
       </div>
-
-      <!-- Reviews Tab -->
-      <div class="admin-panel" id="panel-reviews" style="display:none">
-        <h3>التقييمات</h3>
-        <div id="admin-reviews-list" class="admin-list"></div>
+      <div id="panel-settings" class="admin-panel" style="display: none;">
+        <textarea id="about-edit-text" class="input-field" rows="4" placeholder="نص عن الموقع"></textarea>
+        <button class="btn-primary" onclick="saveAbout()">💾 حفظ</button>
+        <div style="margin: 1rem 0;"><h3>🔑 تغيير كلمة المرور</h3></div>
+        <input type="password" id="new-admin-pass" class="input-field" placeholder="كلمة مرور جديدة">
+        <button class="btn-primary" onclick="changeAdminPass()">تغيير</button>
+        <div style="margin: 1rem 0;"><h3>☁️ إعدادات Supabase</h3></div>
+        <input type="text" id="sb-url-input" class="input-field" placeholder="Supabase URL">
+        <input type="text" id="sb-key-input" class="input-field" placeholder="Supabase anon key">
+        <button class="btn-primary" onclick="saveSupabaseConfig()">حفظ والاتصال</button>
       </div>
-
-      <!-- About Tab -->
-      <div class="admin-panel" id="panel-about" style="display:none">
-        <h3>تعديل نص عننا</h3>
-        <textarea id="about-edit-text" class="input-field" rows="5" placeholder="اكتب تعريف عن المتجر..."></textarea>
-        <h3 style="margin-top:1.5rem">روابط الديسكورد والحسابات</h3>
-        <div id="socials-list" class="admin-list"></div>
-        <div class="admin-form">
-          <input type="text" id="social-name" class="input-field" placeholder="اسم الحساب (مثال: ديسكورد)"/>
-          <input type="text" id="social-url" class="input-field" placeholder="الرابط"/>
-          <input type="text" id="social-icon" class="input-field" placeholder="إيموجي (مثال: 💬)"/>
-          <button class="btn-primary" onclick="addSocial()">➕ إضافة رابط</button>
-        </div>
-        <button class="btn-success" style="margin-top:1rem" onclick="saveAbout()">💾 حفظ التعريف</button>
-      </div>
-
-      <!-- Settings Tab -->
-      <div class="admin-panel" id="panel-settings" style="display:none">
-        <h3>إعدادات المتجر</h3>
-        <div class="admin-form">
-          <label class="input-label">كلمة مرور الأدمن (الجديدة)</label>
-          <input type="password" id="new-admin-pass" class="input-field" placeholder="كلمة مرور جديدة"/>
-          <button class="btn-primary" onclick="changeAdminPass()">🔒 تغيير كلمة المرور</button>
-        </div>
-        <div class="admin-divider"></div>
-        <div class="admin-form">
-          <label class="input-label">Supabase URL</label>
-          <input type="text" id="sb-url-input" class="input-field" placeholder="https://xxxx.supabase.co"/>
-          <label class="input-label">Supabase Anon Key</label>
-          <input type="text" id="sb-key-input" class="input-field" placeholder="eyJh..."/>
-          <button class="btn-primary" onclick="saveSupabaseConfig()">🔗 حفظ الإعدادات</button>
-        </div>
-      </div>
-
     </div>
   </div>
 </div>
 
-<!-- ======= ORDER MODAL ======= -->
 <div class="modal-overlay" id="order-overlay">
-  <div class="modal order-modal">
-    <button class="modal-close" id="close-order">✕</button>
-    <h2 class="modal-title">🛒 طلب المنتج</h2>
+  <div class="modal">
+    <h3>🛍️ تقديم طلب</h3>
     <div id="order-product-info"></div>
-    <div class="admin-form">
-      <input type="text" id="order-name" class="input-field" placeholder="اسمك"/>
-      <input type="text" id="order-discord" class="input-field" placeholder="ID الديسكورد (اختياري)"/>
-      <textarea id="order-note" class="input-field" rows="2" placeholder="ملاحظة (اختياري)"></textarea>
-      <button class="btn-primary" onclick="submitOrder()">✅ تأكيد الطلب</button>
-    </div>
+    <input type="text" id="order-name" class="input-field" placeholder="اسمك الكامل">
+    <input type="text" id="order-discord" class="input-field" placeholder="معرف ديسكورد">
+    <textarea id="order-note" class="input-field" placeholder="ملاحظات"></textarea>
+    <button class="btn-primary" onclick="submitOrder()">إرسال الطلب</button>
+    <button id="close-order" style="margin-top: 0.5rem; background: none; border: 1px solid var(--border); padding: 0.5rem; border-radius: 8px; width: 100%; cursor: pointer;">إغلاق</button>
   </div>
 </div>
 
-<!-- ======= REVIEW MODAL ======= -->
 <div class="modal-overlay" id="review-overlay">
-  <div class="modal review-modal">
-    <button class="modal-close" id="close-review">✕</button>
-    <h2 class="modal-title">⭐ إضافة تقييم</h2>
-    <div class="admin-form">
-      <input type="text" id="review-name" class="input-field" placeholder="اسمك"/>
-      <div class="stars-row" id="stars-row">
-        <span class="star" data-v="1">★</span>
-        <span class="star" data-v="2">★</span>
-        <span class="star" data-v="3">★</span>
-        <span class="star" data-v="4">★</span>
-        <span class="star" data-v="5">★</span>
-      </div>
-      <textarea id="review-text" class="input-field" rows="3" placeholder="تقييمك..."></textarea>
-      <button class="btn-primary" onclick="submitReview()">📨 إرسال</button>
+  <div class="modal">
+    <h3>⭐ أضف تقييمك</h3>
+    <input type="text" id="review-name" class="input-field" placeholder="اسمك">
+    <div class="stars-row" id="stars-row">
+      <span class="star" data-v="1">☆</span><span class="star" data-v="2">☆</span><span class="star" data-v="3">☆</span><span class="star" data-v="4">☆</span><span class="star" data-v="5">☆</span>
     </div>
+    <textarea id="review-text" class="input-field" placeholder="رأيك عن المتجر"></textarea>
+    <button class="btn-primary" onclick="submitReview()">إرسال التقييم</button>
+    <button id="close-review" style="margin-top: 0.5rem; background: none; border: 1px solid var(--border); padding: 0.5rem; border-radius: 8px; width: 100%; cursor: pointer;">إغلاق</button>
   </div>
 </div>
 
-<script src="script.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// ======= بيانات Supabase (ضع بياناتك هنا مباشرة) =======
+let SUPABASE_URL = 'https://voagykakapoxiycbaxbm.supabase.co';
+let SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZvYWd5a2FrYXBveGl5Y2JheGJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDM5MjU2ODcsImV4cCI6MjA1OTUwMTY4N30.lX8tJkqRVy3pSZzO6E9QmJ5bMwAwG1C3Jw_m7PmG-QM';
+
+// ======= متغير Supabase العالمي =======
+let supabase = null;
+
+// ======= دالة الربط =======
+function initSupabase() {
+  if (SUPABASE_URL && SUPABASE_KEY) {
+    try {
+      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      console.log('✅ Supabase connected');
+      return true;
+    } catch (e) {
+      console.warn('Supabase init failed:', e);
+      return false;
+    }
+  }
+  return false;
+}
+
+const ADMIN_PASS_KEY = 'soblex_admin_pass';
+function getAdminPass() { return localStorage.getItem(ADMIN_PASS_KEY) || 'soblex2024'; }
+
+// ======= الإشعارات =======
+let notifications = [];
+async function loadNotifications() {
+  if (!supabase) return;
+  const { data } = await supabase.from('notifications').select('*').order('created_at', { ascending: false }).limit(20);
+  notifications = data || [];
+  updateNotificationBadge();
+  renderNotifications();
+}
+async function getUnreadCount() {
+  if (!supabase) return 0;
+  const { count } = await supabase.from('notifications').select('*', { count: 'exact', head: true }).eq('read', false);
+  return count || 0;
+}
+async function updateNotificationBadge() {
+  const count = await getUnreadCount();
+  const badge = document.getElementById('notif-badge');
+  if (badge) {
+    badge.textContent = count > 0 ? count : '';
+    badge.style.display = count > 0 ? 'flex' : 'none';
+  }
+}
+function renderNotifications() {
+  const container = document.getElementById('notif-dropdown');
+  if (!container) return;
+  if (notifications.length === 0) {
+    container.innerHTML = '<div class="notif-item">لا توجد إشعارات</div>';
+    return;
+  }
+  container.innerHTML = notifications.map(n => `
+    <div class="notif-item ${!n.read ? 'unread' : ''}" onclick="markNotificationRead('${n.id}')">
+      ${n.message}
+      <div class="notif-time">${new Date(n.created_at).toLocaleString('ar')}</div>
+    </div>
+  `).join('');
+}
+window.markNotificationRead = async function(id) {
+  if (!supabase) return;
+  await supabase.from('notifications').update({ read: true }).eq('id', id);
+  loadNotifications();
+};
+
+// ======= المنتجات =======
+async function getProducts(category = null) {
+  if (!supabase) return [];
+  let query = supabase.from('products').select('*').eq('active', true);
+  if (category) query = query.eq('category', category);
+  const { data } = await query.order('created_at', { ascending: false });
+  return data || [];
+}
+async function getAllProducts() {
+  if (!supabase) return [];
+  const { data } = await supabase.from('products').select('*').order('created_at', { ascending: false });
+  return data || [];
+}
+function renderProducts(products, gridId) {
+  const grid = document.getElementById(gridId);
+  if (!grid) return;
+  grid.innerHTML = '';
+  if (!products.length) { grid.innerHTML = '<div style="color:var(--muted);text-align:center;padding:2rem;">لا توجد منتجات</div>'; return; }
+  products.forEach(p => {
+    const isDiscount = p.category === 'discounts' || p.category === 'offers';
+    const card = document.createElement('div');
+    card.className = 'product-card';
+    if (isDiscount) card.classList.add('rainbow-border');
+    card.innerHTML = `
+      <div class="product-card-img">
+        ${p.image_url ? `<img src="${p.image_url}" alt="${p.name}" onerror="this.style.display='none'"/>` : '🎁'}
+      </div>
+      <div class="product-card-body">
+        <div class="product-card-name ${isDiscount ? 'rainbow-text' : ''}">${p.name}</div>
+        <div style="font-size:0.75rem;color:var(--muted)">${p.description || ''}</div>
+        <div class="product-card-price">${p.price}</div>
+        <button class="btn-order" onclick="openOrder('${p.id}','${escape(p.name)}','${escape(p.price)}')">طلب</button>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+const categoryMap = {
+  offers: 'grid-offers', discounts: 'grid-discounts', servers: 'grid-servers',
+  boosts: 'grid-boosts', nitro9: 'grid-nitro9', gifts: 'grid-gifts',
+  apps: 'grid-apps', wallets: 'grid-wallets', vouchers: 'grid-vouchers'
+};
+async function loadAllPages() {
+  for (const [cat, gridId] of Object.entries(categoryMap)) {
+    const products = await getProducts(cat);
+    renderProducts(products, gridId);
+  }
+}
+async function loadStats() {
+  if (!supabase) return;
+  const { count: pCount } = await supabase.from('products').select('*', { count: 'exact', head: true }).eq('active', true);
+  const { count: oCount } = await supabase.from('orders').select('*', { count: 'exact', head: true });
+  const { count: rCount } = await supabase.from('reviews').select('*', { count: 'exact', head: true });
+  document.getElementById('stat-products').textContent = pCount || 0;
+  document.getElementById('stat-orders').textContent = oCount || 0;
+  document.getElementById('stat-reviews').textContent = rCount || 0;
+}
+
+// ======= رفع الصور =======
+let currentImageFile = null;
+document.getElementById('prod-image-file')?.addEventListener('change', (e) => {
+  currentImageFile = e.target.files[0];
+  if (currentImageFile) {
+    const preview = document.getElementById('image-preview');
+    const url = URL.createObjectURL(currentImageFile);
+    preview.innerHTML = `<img src="${url}" style="max-width:100px; border-radius:8px;">`;
+  }
+});
+async function uploadImage(file) {
+  if (!supabase || !file) return '';
+  const ext = file.name.split('.').pop();
+  const fileName = `${Date.now()}.${ext}`;
+  const { error } = await supabase.storage.from('product-images').upload(fileName, file);
+  if (error) { console.error(error); return ''; }
+  const { data: { publicUrl } } = supabase.storage.from('product-images').getPublicUrl(fileName);
+  return publicUrl;
+}
+window.addProduct = async function() {
+  const category = document.getElementById('prod-category').value;
+  const name = document.getElementById('prod-name').value.trim();
+  const price = document.getElementById('prod-price').value.trim();
+  const description = document.getElementById('prod-desc').value.trim();
+  if (!name || !price) { alert('الاسم والسعر مطلوبان'); return; }
+  let image_url = '';
+  if (currentImageFile) {
+    image_url = await uploadImage(currentImageFile);
+  }
+  const product = {
+    id: Date.now().toString(),
+    category, name, price, description, image_url,
+    active: true, created_at: new Date().toISOString()
+  };
+  if (supabase) {
+    const { error } = await supabase.from('products').insert([product]);
+    if (error) { alert('خطأ: ' + error.message); return; }
+  }
+  document.getElementById('prod-name').value = '';
+  document.getElementById('prod-price').value = '';
+  document.getElementById('prod-desc').value = '';
+  document.getElementById('prod-image-file').value = '';
+  document.getElementById('image-preview').innerHTML = '';
+  currentImageFile = null;
+  alert('✅ تم إضافة المنتج');
+  loadAdminProducts();
+  loadAllPages();
+  loadStats();
+  loadNotifications();
+};
+async function loadAdminProducts() {
+  const products = await getAllProducts();
+  const list = document.getElementById('admin-products-list');
+  list.innerHTML = '';
+  if (!products.length) { list.innerHTML = '<p>لا توجد منتجات</p>'; return; }
+  products.forEach(p => {
+    const item = document.createElement('div');
+    item.className = 'admin-item';
+    item.innerHTML = `<div><strong>${p.name}</strong><br><small>${p.category} — ${p.price}</small></div>
+                      <button class="btn-delete" onclick="deleteProduct('${p.id}')">حذف</button>`;
+    list.appendChild(item);
+  });
+}
+window.deleteProduct = async function(id) {
+  if (!confirm('تأكيد الحذف؟')) return;
+  if (supabase) await supabase.from('products').delete().eq('id', id);
+  loadAdminProducts();
+  loadAllPages();
+  loadStats();
+};
+
+// ======= الطلبات =======
+let currentOrderProduct = null;
+window.openOrder = function(id, name, price) {
+  currentOrderProduct = { id, name: unescape(name), price: unescape(price) };
+  document.getElementById('order-product-info').innerHTML = `<div style="background:var(--bg3);padding:1rem;border-radius:8px;"><strong>${unescape(name)}</strong><br>${unescape(price)}</div>`;
+  document.getElementById('order-overlay').classList.add('open');
+};
+window.submitOrder = async function() {
+  const name = document.getElementById('order-name').value.trim();
+  const discord = document.getElementById('order-discord').value.trim();
+  const note = document.getElementById('order-note').value.trim();
+  if (!name) { alert('الاسم مطلوب'); return; }
+  const order = {
+    id: Date.now().toString(),
+    product_id: currentOrderProduct.id,
+    product_name: currentOrderProduct.name,
+    product_price: currentOrderProduct.price,
+    customer_name: name, discord_id: discord, note, status: 'pending',
+    created_at: new Date().toISOString()
+  };
+  if (supabase) {
+    const { error } = await supabase.from('orders').insert([order]);
+    if (error) { alert('خطأ: ' + error.message); return; }
+  }
+  document.getElementById('order-name').value = '';
+  document.getElementById('order-discord').value = '';
+  document.getElementById('order-note').value = '';
+  document.getElementById('order-overlay').classList.remove('open');
+  alert('✅ تم إرسال طلبك!');
+  loadStats();
+  loadNotifications();
+};
+async function loadAdminOrders() {
+  if (!supabase) return;
+  const { data } = await supabase.from('orders').select('*').order('created_at', { ascending: false });
+  const list = document.getElementById('admin-orders-list');
+  list.innerHTML = '';
+  if (!data?.length) { list.innerHTML = '<p>لا توجد طلبات</p>'; return; }
+  data.forEach(o => {
+    const item = document.createElement('div');
+    item.className = 'admin-item';
+    item.innerHTML = `<div><strong>${o.customer_name}</strong> — ${o.product_name}<br><small>${o.product_price}</small></div>
+                      <div><button class="btn-delete" onclick="markOrderDone('${o.id}')">✅</button>
+                      <button class="btn-delete" onclick="deleteOrder('${o.id}')">🗑️</button></div>`;
+    list.appendChild(item);
+  });
+}
+window.markOrderDone = async function(id) {
+  if (supabase) await supabase.from('orders').update({ status: 'done' }).eq('id', id);
+  loadAdminOrders();
+};
+window.deleteOrder = async function(id) {
+  if (!confirm('حذف الطلب؟')) return;
+  if (supabase) await supabase.from('orders').delete().eq('id', id);
+  loadAdminOrders();
+  loadStats();
+};
+
+// ======= التقييمات =======
+let selectedStars = 0;
+function setupStars() {
+  const stars = document.querySelectorAll('.star');
+  stars.forEach(star => {
+    star.addEventListener('click', () => {
+      selectedStars = parseInt(star.getAttribute('data-v'));
+      stars.forEach((s, i) => s.classList.toggle('active', i < selectedStars));
+    });
+  });
+}
+window.submitReview = async function() {
+  const name = document.getElementById('review-name').value.trim();
+  const text = document.getElementById('review-text').value.trim();
+  if (!name || !selectedStars) { alert('الاسم والتقييم مطلوبان'); return; }
+  const review = {
+    id: Date.now().toString(), customer_name: name, rating: selectedStars, text,
+    created_at: new Date().toISOString()
+  };
+  if (supabase) {
+    const { error } = await supabase.from('reviews').insert([review]);
+    if (error) { alert('خطأ: ' + error.message); return; }
+  }
+  document.getElementById('review-name').value = '';
+  document.getElementById('review-text').value = '';
+  selectedStars = 0;
+  document.querySelectorAll('.star').forEach(s => s.classList.remove('active'));
+  document.getElementById('review-overlay').classList.remove('open');
+  alert('✅ شكراً على تقييمك!');
+  loadStats();
+  loadNotifications();
+};
+async function loadAdminReviews() {
+  if (!supabase) return;
+  const { data } = await supabase.from('reviews').select('*').order('created_at', { ascending: false });
+  const list = document.getElementById('admin-reviews-list');
+  list.innerHTML = '';
+  if (!data?.length) { list.innerHTML = '<p>لا توجد تقييمات</p>'; return; }
+  data.forEach(r => {
+    const stars = '★'.repeat(r.rating) + '☆'.repeat(5 - r.rating);
+    const item = document.createElement('div');
+    item.className = 'admin-item';
+    item.innerHTML = `<div><strong>${r.customer_name}</strong> ${stars}<br>${r.text || ''}</div>
+                      <button class="btn-delete" onclick="deleteReview('${r.id}')">حذف</button>`;
+    list.appendChild(item);
+  });
+}
+window.deleteReview = async function(id) {
+  if (!confirm('حذف التقييم؟')) return;
+  if (supabase) await supabase.from('reviews').delete().eq('id', id);
+  loadAdminReviews();
+  loadStats();
+};
+
+// ======= عن الموقع والروابط =======
+async function loadAbout() {
+  if (!supabase) return;
+  const { data } = await supabase.from('settings').select('*').eq('key', 'about').single();
+  document.getElementById('about-text').innerHTML = data?.value || 'لا يوجد تعريف';
+  const { data: socials } = await supabase.from('socials').select('*');
+  const grid = document.getElementById('socials-grid');
+  grid.innerHTML = '';
+  socials?.forEach(s => {
+    const a = document.createElement('a');
+    a.href = s.url; a.target = '_blank'; a.className = 'social-btn';
+    a.innerHTML = `${s.icon || '🔗'} ${s.name}`;
+    grid.appendChild(a);
+  });
+}
+window.saveAbout = async function() {
+  const text = document.getElementById('about-edit-text').value;
+  if (supabase) await supabase.from('settings').upsert({ key: 'about', value: text });
+  loadAbout();
+  alert('✅ تم الحفظ');
+};
+async function loadAdminSocials() {
+  if (!supabase) return;
+  const { data } = await supabase.from('socials').select('*');
+  const list = document.getElementById('socials-list');
+  list.innerHTML = '';
+  data?.forEach(s => {
+    const item = document.createElement('div');
+    item.className = 'admin-item';
+    item.innerHTML = `<div>${s.icon} ${s.name}<br><small>${s.url}</small></div>
+                      <button class="btn-delete" onclick="deleteSocial('${s.id}')">حذف</button>`;
+    list.appendChild(item);
+  });
+}
+window.addSocial = async function() {
+  const name = document.getElementById('social-name').value.trim();
+  const url = document.getElementById('social-url').value.trim();
+  const icon = document.getElementById('social-icon').value.trim();
+  if (!name || !url) { alert('الاسم والرابط مطلوبان'); return; }
+  const social = { id: Date.now().toString(), name, url, icon, created_at: new Date().toISOString() };
+  if (supabase) await supabase.from('socials').insert([social]);
+  loadAdminSocials();
+  loadAbout();
+};
+window.deleteSocial = async function(id) {
+  if (!confirm('حذف الرابط؟')) return;
+  if (supabase) await supabase.from('socials').delete().eq('id', id);
+  loadAdminSocials();
+  loadAbout();
+};
+
+// ======= لوحة التحكم =======
+window.adminLogin = function() {
+  const input = document.getElementById('admin-password-input').value;
+  if (input === getAdminPass()) {
+    document.getElementById('admin-login-view').style.display = 'none';
+    document.getElementById('admin-dashboard').style.display = 'block';
+    loadAdminProducts(); loadAdminOrders(); loadAdminReviews(); loadAdminSocials();
+    document.getElementById('about-edit-text').value = document.getElementById('about-text')?.innerText || '';
+  } else {
+    document.getElementById('admin-login-error').textContent = '❌ كلمة المرور غلط';
+  }
+};
+window.adminTab = function(name) {
+  document.querySelectorAll('.admin-panel').forEach(p => p.style.display = 'none');
+  document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(`panel-${name}`).style.display = 'block';
+  event.target.classList.add('active');
+};
+window.changeAdminPass = function() {
+  const newPass = document.getElementById('new-admin-pass').value.trim();
+  if (!newPass || newPass.length < 4) { alert('كلمة المرور قصيرة'); return; }
+  localStorage.setItem(ADMIN_PASS_KEY, newPass);
+  alert('✅ تم التغيير');
+};
+window.saveSupabaseConfig = function() {
+  const url = document.getElementById('sb-url-input').value.trim();
+  const key = document.getElementById('sb-key-input').value.trim();
+  if (!url || !key) { alert('املأ الحقول'); return; }
+  localStorage.setItem('sb_url', url);
+  localStorage.setItem('sb_key', key);
+  SUPABASE_URL = url; SUPABASE_KEY = key;
+  initSupabase();
+  alert('✅ تم الحفظ');
+  location.reload();
+};
+
+// ======= التنقل =======
+function setupNav() {
+  document.querySelectorAll('.nav-link[data-page]').forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const page = link.getAttribute('data-page');
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+      document.getElementById(`page-${page}`).classList.add('active');
+      link.classList.add('active');
+      document.getElementById('sidebar')?.classList.remove('open');
+    });
+  });
+  document.getElementById('open-admin-btn')?.addEventListener('click', () => {
+    document.getElementById('admin-overlay').classList.add('open');
+  });
+  document.getElementById('close-admin')?.addEventListener('click', () => {
+    document.getElementById('admin-overlay').classList.remove('open');
+  });
+  document.getElementById('close-order')?.addEventListener('click', () => {
+    document.getElementById('order-overlay').classList.remove('open');
+  });
+  document.getElementById('close-review')?.addEventListener('click', () => {
+    document.getElementById('review-overlay').classList.remove('open');
+  });
+}
+
+// ======= بدء التشغيل =======
+window.addEventListener('DOMContentLoaded', async () => {
+  initSupabase();
+  setTimeout(() => {
+    const loader = document.getElementById('loader');
+    if (loader) loader.style.display = 'none';
+  }, 2000);
+  setupNav();
+  setupStars();
+  if (supabase) {
+    await loadAllPages();
+    await loadStats();
+    await loadAbout();
+    await loadNotifications();
+  }
+  document.getElementById('sb-url-input').value = SUPABASE_URL;
+  document.getElementById('sb-key-input').value = SUPABASE_KEY;
+});
+
+// ======= زر التقييم العائم =======
+const floatBtn = document.createElement('button');
+floatBtn.innerHTML = '⭐ أضف تقييم';
+floatBtn.style.cssText = `position:fixed;bottom:2rem;right:2rem;background:var(--accent);color:#fff;border:none;padding:0.7rem 1.4rem;border-radius:99px;cursor:pointer;z-index:300;`;
+floatBtn.onclick = () => document.getElementById('review-overlay').classList.add('open');
+document.body.appendChild(floatBtn);
+</script>
 </body>
 </html>
