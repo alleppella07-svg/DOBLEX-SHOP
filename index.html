@@ -781,44 +781,40 @@ window.submitOrder = async function() {
   const note = document.getElementById('order-note').value.trim();
 
   if (!name) { alert('الرجاء إدخال اسمك'); return; }
-  
-  // تصحيح: غيرنا selectedProduct إلى currentOrderProduct
-  if (!currentOrderProduct) { alert('لم يتم اختيار منتج'); return; }
+  if (!currentOrderProduct) { alert('يرجى اختيار منتج أولاً'); return; }
 
   try {
+    // نستخدم مصفوفة بيانات بسيطة جداً
+    const orderData = {
+      product_id: String(currentOrderProduct.id),
+      product_name: currentOrderProduct.name,
+      product_price: currentOrderProduct.price,
+      customer_name: name,
+      discord_id: discord,
+      note: note,
+      status: 'pending'
+    };
+
     const { error } = await supabase
       .from('orders')
-      .insert([
-        {
-          product_id: String(currentOrderProduct.id), // تحويل لـ String لضمان القبول
-          product_name: currentOrderProduct.name,
-          product_price: currentOrderProduct.price,
-          customer_name: name,
-          discord_id: discord,
-          note: note,
-          status: 'pending'
-        }
-      ]);
-    
+      .insert([orderData], { count: 'none' }); // أضفنا count: none لتقليل تعقيد الطلب
+
     if (error) throw error;
 
     alert('✅ تم إرسال طلبك بنجاح!');
     document.getElementById('order-overlay').classList.remove('open');
     
-    // إرسال تنبيه للوحة التحكم
+    // إرسال التنبيه
     await supabase.from('notifications').insert([{
       title: 'طلب جديد',
-      content: `طلب جديد لمنتج: ${currentOrderProduct.name}`,
+      content: `طلب جديد من: ${name}`,
       read: false
     }]);
 
-    // تحديث القوائم في لوحة التحكم إذا كانت مفتوحة
-    loadAdminOrders();
-    loadStats();
-
   } catch (e) {
     console.error('Order Error:', e);
-    alert('❌ فشل إرسال الطلب: ' + (e.message || 'خطأ غير معروف'));
+    // إذا ظهر خطأ Column not found مرة أخرى، سنعرف أن المشكلة في التزامن
+    alert('❌ خطأ في الإرسال: ' + (e.message || 'تأكد من تحديث قاعدة البيانات'));
   }
 };
 async function loadAdminOrders() {
