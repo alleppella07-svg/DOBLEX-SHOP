@@ -6,7 +6,8 @@ let SUPABASE_KEY = localStorage.getItem('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.ey
 function initSupabase() {
   if (SUPABASE_URL && SUPABASE_KEY) {
     try {
-      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      // تأكد أن السطر مكتوب هكذا بدون "let" قبله
+      supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY); 
       console.log('✅ Supabase connected');
       return true;
     } catch (e) {
