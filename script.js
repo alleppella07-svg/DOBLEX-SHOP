@@ -1,13 +1,19 @@
 // ======= SUPABASE CONFIG =======
-// ضع هنا بياناتك من Supabase أو اتركها فاضية وأضفها من لوحة التحكم
-let SUPABASE_URL = localStorage.getItem('https://voagykakapoxiycbaxbm.supabase.co') || '';
-let SUPABASE_KEY = localStorage.getItem('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZvYWd5a2FrYXBveGl5Y2JheGJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3MDQ3MjQsImV4cCI6MjA5MDI4MDcyNH0.MuAYGdHy5aQb2xLHsnb2NrP5P5QNUtPR9IPUgdUclJM') || '';
+// وضعنا القيم مباشرة هنا لضمان عملها فوراً
+let SUPABASE_URL = 'https://voagykakapoxiycbaxbm.supabase.co';
+let SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZvYWd5a2FrYXBveGl5Y2JheGJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3MDQ3MjQsImV4cCI6MjA5MDI4MDcyNH0.MuAYGdHy5aQb2xLHsnb2NrP5P5QNUtPR9IPUgdUclJM';
+
+// لا تكتب let supabase هنا لأن المكتبة عرفتها مسبقاً في index.html
+// فقط سنقوم بتعديل القيمة بالأسفل
 
 function initSupabase() {
   if (SUPABASE_URL && SUPABASE_KEY) {
     try {
-      // تأكد أن السطر مكتوب هكذا بدون "let" قبله
-      supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY); 
+      // نستخدم supabase (الموجودة في window) لإنشاء العميل
+      window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      // نجعل المتغير العالمي supabase يشير للعميل الجديد
+      supabase = window.supabaseClient; 
+      
       console.log('✅ Supabase connected');
       return true;
     } catch (e) {
