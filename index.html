@@ -790,16 +790,16 @@ window.submitOrder = async function() {
       .from('orders')
       .insert([
         {
-          product_id: currentOrderProduct.id,
+          product_id: String(currentOrderProduct.id), // تحويل لـ String لضمان القبول
           product_name: currentOrderProduct.name,
           product_price: currentOrderProduct.price,
-          customer_name: name, // تأكد أن الاسم هنا يطابق ما في الجدول
+          customer_name: name,
           discord_id: discord,
           note: note,
           status: 'pending'
         }
       ]);
-
+    
     if (error) throw error;
 
     alert('✅ تم إرسال طلبك بنجاح!');
