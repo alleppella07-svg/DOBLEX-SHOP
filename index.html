@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SOBLEX SHOP</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+<!-- ======= LOADER / IP SCREEN ======= -->
+<div id="loader" class="loader-screen">
+  <div class="loader-box">
+    <div class="loader-logo">SOBLEX</div>
+    <div class="loader-text">جاري تحديد جهازك...</div>
+    <div class="loader-ip" id="loader-ip">──────────</div>
+    <div class="loader-bar"><div class="loader-fill"></div></div>
+  </div>
+</div>
+
+<!-- ======= SIDEBAR ======= -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <span class="sidebar-logo">SOBLEX<span class="shop-tag">SHOP</span></span>
+  </div>
+
+  <nav class="sidebar-nav">
+    <!-- العروض والخصومات -->
+    <div class="nav-section special">
+      <a class="nav-link badge-link" href="#" data-page="offers">
+        <span class="icon">🔥</span> العروض
+        <span class="badge new-badge">NEW</span>
+      </a>
+      <a class="nav-link badge-link" href="#" data-page="discounts">
+        <span class="icon">💸</span> الخصومات
+        <span class="badge new-badge">NEW</span>
+      </a>
+    </div>
+
+    <div class="nav-divider"></div>
+
+    <!-- المتجر -->
+    <div class="nav-category-label">▾ المتجر</div>
+
+    <a class="nav-link badge-link" href="#" data-page="servers">
+      <span class="icon">#</span> سيرفرات
+      <span class="badge new-badge">NEW</span>
+    </a>
+    <a class="nav-link badge-link" href="#" data-page="boosts">
+      <span class="icon">#</span> بوستات
+      <span class="badge new-badge">NEW</span>
+    </a>
+    <a class="nav-link badge-link" href="#" data-page="nitro9">
+      <span class="icon">#</span> النيترو9
+      <span class="badge new-badge">NEW</span>
+    </a>
+    <a class="nav-link badge-link" href="#" data-page="gifts">
+      <span class="icon">#</span> الفزات
+      <span class="badge new-badge">NEW</span>
+    </a>
+    <a class="nav-link badge-link" href="#" data-page="apps">
+      <span class="icon">#</span> التطبيقات
+      <span class="badge new-badge">NEW</span>
+    </a>
+    <a class="nav-link badge-link" href="#" data-page="wallets">
+      <span class="icon">#</span> مواقع
+      <span class="badge new-badge">NEW</span>
+    </a>
+    <a class="nav-link badge-link" href="#" data-page="vouchers">
+      <span class="icon">#</span> بوزرات
+      <span class="badge new-badge">NEW</span>
+    </a>
+
+    <div class="nav-divider"></div>
+
+    <a class="nav-link" href="#" data-page="about">
+      <span class="icon">👾</span> عننا
+    </a>
+
+    <div class="nav-divider"></div>
+
+    <!-- Admin -->
+    <a class="nav-link admin-link" href="#" id="open-admin-btn">
+      <span class="icon">⚙️</span> لوحة التحكم
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <span class="user-ip" id="sidebar-ip">IP: ──────</span>
+  </div>
+</aside>
+
+<!-- ======= MOBILE TOPBAR ======= -->
+<div class="topbar-mobile">
+  <button class="menu-toggle" id="menu-toggle">☰</button>
+  <span class="topbar-logo">SOBLEX<span class="shop-tag">SHOP</span></span>
+</div>
+
+<!-- ======= MAIN CONTENT ======= -->
+<main class="main-content" id="main-content">
+
+  <!-- HOME -->
+  <section class="page active" id="page-home">
+    <div class="hero">
+      <div class="hero-text">
+        <h1>SOBLEX<br/><span>SHOP</span></h1>
+        <p>متجرك الرقمي الأول</p>
+      </div>
+      <div class="hero-glow"></div>
+    </div>
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-num" id="stat-products">0</div><div class="stat-label">منتج</div></div>
+      <div class="stat-card"><div class="stat-num" id="stat-orders">0</div><div class="stat-label">طلب</div></div>
+      <div class="stat-card"><div class="stat-num" id="stat-reviews">0</div><div class="stat-label">تقييم</div></div>
+    </div>
+  </section>
+
+  <!-- OFFERS -->
+  <section class="page" id="page-offers">
+    <div class="page-header"><h2><span class="icon">🔥</span> العروض</h2></div>
+    <div class="products-grid" id="grid-offers"></div>
+    <div class="empty-state">لا توجد عروض حالياً</div>
+  </section>
+
+  <!-- DISCOUNTS -->
+  <section class="page" id="page-discounts">
+    <div class="page-header"><h2><span class="icon">💸</span> الخصومات</h2></div>
+    <div class="products-grid" id="grid-discounts"></div>
+    <div class="empty-state">لا توجد خصومات حالياً</div>
+  </section>
+
+  <!-- SERVERS -->
+  <section class="page" id="page-servers">
+    <div class="page-header"><h2><span class="icon">#</span> سيرفرات</h2></div>
+    <div class="products-grid" id="grid-servers"></div>
+    <div class="empty-state">لا توجد منتجات حالياً</div>
+  </section>
+
+  <!-- BOOSTS -->
+  <section class="page" id="page-boosts">
+    <div class="page-header"><h2><span class="icon">#</span> بوستات</h2></div>
+    <div class="products-grid" id="grid-boosts"></div>
+    <div class="empty-state">لا توجد منتجات حالياً</div>
+  </section>
+
+  <!-- NITRO9 -->
+  <section class="page" id="page-nitro9">
+    <div class="page-header"><h2><span class="icon">#</span> النيترو9</h2></div>
+    <div class="products-grid" id="grid-nitro9"></div>
+    <div class="empty-state">لا توجد منتجات حالياً</div>
+  </section>
+
+  <!-- GIFTS -->
+  <section class="page" id="page-gifts">
+    <div class="page-header"><h2><span class="icon">#</span> الفزات</h2></div>
+    <div class="products-grid" id="grid-gifts"></div>
+    <div class="empty-state">لا توجد منتجات حالياً</div>
+  </section>
+
+  <!-- APPS -->
+  <section class="page" id="page-apps">
+    <div class="page-header"><h2><span class="icon">#</span> التطبيقات</h2></div>
+    <div class="products-grid" id="grid-apps"></div>
+    <div class="empty-state">لا توجد منتجات حالياً</div>
+  </section>
+
+  <!-- WALLETS -->
+  <section class="page" id="page-wallets">
+    <div class="page-header"><h2><span class="icon">#</span> مواقع</h2></div>
+    <div class="products-grid" id="grid-wallets"></div>
+    <div class="empty-state">لا توجد منتجات حالياً</div>
+  </section>
+
+  <!-- VOUCHERS -->
+  <section class="page" id="page-vouchers">
+    <div class="page-header"><h2><span class="icon">#</span> بوزرات</h2></div>
+    <div class="products-grid" id="grid-vouchers"></div>
+    <div class="empty-state">لا توجد منتجات حالياً</div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="page" id="page-about">
+    <div class="page-header"><h2>👾 عننا</h2></div>
+    <div class="about-content" id="about-content">
+      <div class="about-box">
+        <p id="about-text">جاري التحميل...</p>
+      </div>
+      <div class="socials-grid" id="socials-grid"></div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ======= ADMIN MODAL ======= -->
+<div class="modal-overlay" id="admin-overlay">
+  <div class="modal admin-modal">
+    <button class="modal-close" id="close-admin">✕</button>
+    <h2 class="modal-title">⚙️ لوحة التحكم</h2>
+
+    <!-- Admin Login -->
+    <div id="admin-login-view">
+      <p style="color:var(--muted);margin-bottom:1rem;">أدخل كلمة مرور الأدمن</p>
+      <input type="password" id="admin-password-input" class="input-field" placeholder="كلمة المرور"/>
+      <button class="btn-primary" id="admin-login-btn" onclick="adminLogin()">دخول</button>
+      <div id="admin-login-error" class="error-msg"></div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="admin-dashboard" style="display:none">
+      <div class="admin-tabs">
+        <button class="admin-tab active" onclick="adminTab('products')">المنتجات</button>
+        <button class="admin-tab" onclick="adminTab('orders')">الطلبات</button>
+        <button class="admin-tab" onclick="adminTab('reviews')">التقييمات</button>
+        <button class="admin-tab" onclick="adminTab('about')">عننا</button>
+        <button class="admin-tab" onclick="adminTab('settings')">الإعدادات</button>
+      </div>
+
+      <!-- Products Tab -->
+      <div class="admin-panel" id="panel-products">
+        <h3>إضافة منتج جديد</h3>
+        <div class="admin-form">
+          <select id="prod-category" class="input-field">
+            <option value="offers">العروض</option>
+            <option value="discounts">الخصومات</option>
+            <option value="servers">سيرفرات</option>
+            <option value="boosts">بوستات</option>
+            <option value="nitro9">النيترو9</option>
+            <option value="gifts">الفزات</option>
+            <option value="apps">التطبيقات</option>
+            <option value="wallets">مواقع</option>
+            <option value="vouchers">بوزرات</option>
+          </select>
+          <input type="text" id="prod-name" class="input-field" placeholder="اسم المنتج"/>
+          <input type="text" id="prod-price" class="input-field" placeholder="السعر (مثال: 5 ريال)"/>
+          <textarea id="prod-desc" class="input-field" placeholder="الوصف" rows="3"></textarea>
+          <input type="text" id="prod-image" class="input-field" placeholder="رابط الصورة (اختياري)"/>
+          <button class="btn-primary" onclick="addProduct()">➕ إضافة</button>
+        </div>
+        <div class="admin-divider"></div>
+        <h3>المنتجات الحالية</h3>
+        <div id="admin-products-list" class="admin-list"></div>
+      </div>
+
+      <!-- Orders Tab -->
+      <div class="admin-panel" id="panel-orders" style="display:none">
+        <h3>الطلبات</h3>
+        <div id="admin-orders-list" class="admin-list"></div>
+      </div>
+
+      <!-- Reviews Tab -->
+      <div class="admin-panel" id="panel-reviews" style="display:none">
+        <h3>التقييمات</h3>
+        <div id="admin-reviews-list" class="admin-list"></div>
+      </div>
+
+      <!-- About Tab -->
+      <div class="admin-panel" id="panel-about" style="display:none">
+        <h3>تعديل نص عننا</h3>
+        <textarea id="about-edit-text" class="input-field" rows="5" placeholder="اكتب تعريف عن المتجر..."></textarea>
+        <h3 style="margin-top:1.5rem">روابط الديسكورد والحسابات</h3>
+        <div id="socials-list" class="admin-list"></div>
+        <div class="admin-form">
+          <input type="text" id="social-name" class="input-field" placeholder="اسم الحساب (مثال: ديسكورد)"/>
+          <input type="text" id="social-url" class="input-field" placeholder="الرابط"/>
+          <input type="text" id="social-icon" class="input-field" placeholder="إيموجي (مثال: 💬)"/>
+          <button class="btn-primary" onclick="addSocial()">➕ إضافة رابط</button>
+        </div>
+        <button class="btn-success" style="margin-top:1rem" onclick="saveAbout()">💾 حفظ التعريف</button>
+      </div>
+
+      <!-- Settings Tab -->
+      <div class="admin-panel" id="panel-settings" style="display:none">
+        <h3>إعدادات المتجر</h3>
+        <div class="admin-form">
+          <label class="input-label">كلمة مرور الأدمن (الجديدة)</label>
+          <input type="password" id="new-admin-pass" class="input-field" placeholder="كلمة مرور جديدة"/>
+          <button class="btn-primary" onclick="changeAdminPass()">🔒 تغيير كلمة المرور</button>
+        </div>
+        <div class="admin-divider"></div>
+        <div class="admin-form">
+          <label class="input-label">Supabase URL</label>
+          <input type="text" id="sb-url-input" class="input-field" placeholder="https://xxxx.supabase.co"/>
+          <label class="input-label">Supabase Anon Key</label>
+          <input type="text" id="sb-key-input" class="input-field" placeholder="eyJh..."/>
+          <button class="btn-primary" onclick="saveSupabaseConfig()">🔗 حفظ الإعدادات</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ======= ORDER MODAL ======= -->
+<div class="modal-overlay" id="order-overlay">
+  <div class="modal order-modal">
+    <button class="modal-close" id="close-order">✕</button>
+    <h2 class="modal-title">🛒 طلب المنتج</h2>
+    <div id="order-product-info"></div>
+    <div class="admin-form">
+      <input type="text" id="order-name" class="input-field" placeholder="اسمك"/>
+      <input type="text" id="order-discord" class="input-field" placeholder="ID الديسكورد (اختياري)"/>
+      <textarea id="order-note" class="input-field" rows="2" placeholder="ملاحظة (اختياري)"></textarea>
+      <button class="btn-primary" onclick="submitOrder()">✅ تأكيد الطلب</button>
+    </div>
+  </div>
+</div>
+
+<!-- ======= REVIEW MODAL ======= -->
+<div class="modal-overlay" id="review-overlay">
+  <div class="modal review-modal">
+    <button class="modal-close" id="close-review">✕</button>
+    <h2 class="modal-title">⭐ إضافة تقييم</h2>
+    <div class="admin-form">
+      <input type="text" id="review-name" class="input-field" placeholder="اسمك"/>
+      <div class="stars-row" id="stars-row">
+        <span class="star" data-v="1">★</span>
+        <span class="star" data-v="2">★</span>
+        <span class="star" data-v="3">★</span>
+        <span class="star" data-v="4">★</span>
+        <span class="star" data-v="5">★</span>
+      </div>
+      <textarea id="review-text" class="input-field" rows="3" placeholder="تقييمك..."></textarea>
+      <button class="btn-primary" onclick="submitReview()">📨 إرسال</button>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
