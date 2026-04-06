@@ -2,7 +2,6 @@
 // ضع هنا بياناتك من Supabase أو اتركها فاضية وأضفها من لوحة التحكم
 let SUPABASE_URL = localStorage.getItem('https://voagykakapoxiycbaxbm.supabase.co') || '';
 let SUPABASE_KEY = localStorage.getItem('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZvYWd5a2FrYXBveGl5Y2JheGJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3MDQ3MjQsImV4cCI6MjA5MDI4MDcyNH0.MuAYGdHy5aQb2xLHsnb2NrP5P5QNUtPR9IPUgdUclJM') || '';
-let supabase = null;
 
 function initSupabase() {
   if (SUPABASE_URL && SUPABASE_KEY) {
