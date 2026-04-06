@@ -982,23 +982,35 @@ function setupNav() {
   });
 }
 
-// ======= بدء التشغيل =======
 window.addEventListener('DOMContentLoaded', async () => {
+  // 1. مسح الذاكرة القديمة برمجياً لمرة واحدة لضمان التحديث
+  // localStorage.clear(); // يمكنك تفعيل هذا السطر لمرة واحدة إذا استمرت المشكلة
+
   initSupabase();
+  
   setTimeout(() => {
     const loader = document.getElementById('loader');
     if (loader) loader.style.display = 'none';
   }, 2000);
+
   setupNav();
   setupStars();
+
   if (supabase) {
-    await loadAllPages();
-    await loadStats();
-    await loadAbout();
-    await loadNotifications();
+    // التأكد من جلب البيانات بالترتيب
+    await Promise.all([
+      loadAllPages(),
+      loadStats(),
+      loadAbout(),
+      loadNotifications()
+    ]);
   }
-  document.getElementById('sb-url-input').value = SUPABASE_URL;
-  document.getElementById('sb-key-input').value = SUPABASE_KEY;
+  
+  // تحديث الحقول في لوحة التحكم بالقيم الحالية
+  if(document.getElementById('sb-url-input')) 
+     document.getElementById('sb-url-input').value = SUPABASE_URL;
+  if(document.getElementById('sb-key-input'))
+     document.getElementById('sb-key-input').value = SUPABASE_KEY;
 });
 
 // ======= زر التقييم العائم =======
