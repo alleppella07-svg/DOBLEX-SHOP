@@ -757,36 +757,67 @@ window.deleteProduct = async function(id) {
 };
 
 // ======= الطلبات =======
-let currentOrderProduct = null;
+// ======= الطلبات =======
+let currentOrderProduct = null; // هذا هو المتغير الذي سيخزن بيانات المنتج المختار
+
 window.openOrder = function(id, name, price) {
-  currentOrderProduct = { id, name: unescape(name), price: unescape(price) };
-  document.getElementById('order-product-info').innerHTML = `<div style="background:var(--bg3);padding:1rem;border-radius:8px;"><strong>${unescape(name)}</strong><br>${unescape(price)}</div>`;
+  // نقوم بفك تشفير النصوص وتخزينها في المتغير
+  currentOrderProduct = { 
+    id: id, 
+    name: unescape(name), 
+    price: unescape(price) 
+  };
+  
+  document.getElementById('order-product-info').innerHTML = `
+    <div style="background:var(--bg3);padding:1rem;border-radius:8px;">
+      <strong>${unescape(name)}</strong><br>${unescape(price)}
+    </div>`;
   document.getElementById('order-overlay').classList.add('open');
 };
+
 window.submitOrder = async function() {
   const name = document.getElementById('order-name').value.trim();
   const discord = document.getElementById('order-discord').value.trim();
   const note = document.getElementById('order-note').value.trim();
-  if (!name) { alert('الاسم مطلوب'); return; }
-  const order = {
-    id: Date.now().toString(),
-    product_id: currentOrderProduct.id,
-    product_name: currentOrderProduct.name,
-    product_price: currentOrderProduct.price,
-    customer_name: name, discord_id: discord, note, status: 'pending',
-    created_at: new Date().toISOString()
-  };
-  if (supabase) {
-    const { error } = await supabase.from('orders').insert([order]);
-    if (error) { alert('خطأ: ' + error.message); return; }
+
+  if (!name) { alert('الرجاء إدخال اسمك'); return; }
+  
+  // تصحيح: غيرنا selectedProduct إلى currentOrderProduct
+  if (!currentOrderProduct) { alert('لم يتم اختيار منتج'); return; }
+
+  try {
+    const { error } = await supabase
+      .from('orders')
+      .insert([{
+        product_id: currentOrderProduct.id,
+        product_name: currentOrderProduct.name,
+        product_price: currentOrderProduct.price,
+        customer_name: name,
+        discord_id: discord,
+        note: note,
+        status: 'pending' 
+      }]);
+
+    if (error) throw error;
+
+    alert('✅ تم إرسال طلبك بنجاح!');
+    document.getElementById('order-overlay').classList.remove('open');
+    
+    // إرسال تنبيه للوحة التحكم
+    await supabase.from('notifications').insert([{
+      title: 'طلب جديد',
+      content: `طلب جديد لمنتج: ${currentOrderProduct.name}`,
+      read: false
+    }]);
+
+    // تحديث القوائم في لوحة التحكم إذا كانت مفتوحة
+    loadAdminOrders();
+    loadStats();
+
+  } catch (e) {
+    console.error('Order Error:', e);
+    alert('❌ فشل إرسال الطلب: ' + (e.message || 'خطأ غير معروف'));
   }
-  document.getElementById('order-name').value = '';
-  document.getElementById('order-discord').value = '';
-  document.getElementById('order-note').value = '';
-  document.getElementById('order-overlay').classList.remove('open');
-  alert('✅ تم إرسال طلبك!');
-  loadStats();
-  loadNotifications();
 };
 async function loadAdminOrders() {
   if (!supabase) return;
