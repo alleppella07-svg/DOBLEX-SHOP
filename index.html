@@ -826,7 +826,7 @@ async function loadAdminOrders() {
   data.forEach(o => {
     const item = document.createElement('div');
     item.className = 'admin-item';
-    item.innerHTML = `<div><strong>${o.customer_name}</strong> — ${o.product_name}<br><small>${o.product_price}</small></div>
+    item.innerHTML = `<div><strong>${o.customer_name || 'بدون اسم'}</strong> — ${o.product_name}<br><small>${o.product_price}</small></div>
                       <div><button class="btn-delete" onclick="markOrderDone('${o.id}')">✅</button>
                       <button class="btn-delete" onclick="deleteOrder('${o.id}')">🗑️</button></div>`;
     list.appendChild(item);
@@ -859,7 +859,10 @@ window.submitReview = async function() {
   const text = document.getElementById('review-text').value.trim();
   if (!name || !selectedStars) { alert('الاسم والتقييم مطلوبان'); return; }
   const review = {
-    id: Date.now().toString(), customer_name: name, rating: selectedStars, text,
+    id: Date.now().toString(),
+    customer_name: name,
+    rating: selectedStars,
+    text: text,
     created_at: new Date().toISOString()
   };
   if (supabase) {
@@ -885,7 +888,7 @@ async function loadAdminReviews() {
     const stars = '★'.repeat(r.rating) + '☆'.repeat(5 - r.rating);
     const item = document.createElement('div');
     item.className = 'admin-item';
-    item.innerHTML = `<div><strong>${r.customer_name}</strong> ${stars}<br>${r.text || ''}</div>
+    item.innerHTML = `<div><strong>${r.customer_name || 'زائر'}</strong> ${stars}<br>${r.text || ''}</div>
                       <button class="btn-delete" onclick="deleteReview('${r.id}')">حذف</button>`;
     list.appendChild(item);
   });
