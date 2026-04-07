@@ -1,13 +1,21 @@
+هذا هو ملف HTML كامل لمتجر رقمي باسم "DOBLEX SHOP"، مع تصميم متجاوب للهاتف والكمبيوتر، ونظام إشعارات متكامل، ولوحة تحكم، وتقييمات، وعروض خاصة.
+```html
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
   <title>DOBLEX SHOP | متجر رقمي</title>
-  <link rel="icon" href="data:,">
+  <link rel="icon" href="data:,"> 
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    /* ======= VARIABLES ======= */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
     :root {
       --bg: #0a0a0f;
       --bg2: #111118;
@@ -20,65 +28,88 @@
       --red: #ed4245;
       --text: #e8e8f0;
       --muted: #7b7b9a;
-      --border: rgba(88,101,242,0.18);
-      --glow: rgba(88,101,242,0.25);
+      --border: rgba(88, 101, 242, 0.2);
+      --glow: rgba(88, 101, 242, 0.3);
       --card-bg: #13131c;
       --sidebar-w: 260px;
-      --radius: 12px;
+      --radius: 16px;
       --font: 'Cairo', sans-serif;
       --mono: 'Space Mono', monospace;
     }
-
-    * { margin:0; padding:0; box-sizing:border-box; }
 
     body {
       background: var(--bg);
       color: var(--text);
       font-family: var(--font);
       min-height: 100vh;
+      overflow-x: hidden;
     }
 
-    /* ======= ANIMATIONS ======= */
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-8px); }
+    /* تحسينات للهاتف */
+    @media (max-width: 768px) {
+      .main-content {
+        margin-right: 0 !important;
+        padding: 1rem !important;
+      }
+      .products-grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)) !important;
+        gap: 0.8rem !important;
+      }
+      .hero h1 {
+        font-size: 2rem !important;
+      }
+      .sidebar {
+        width: 75% !important;
+        transform: translateX(100%);
+        transition: transform 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        z-index: 1100;
+      }
+      .sidebar.open {
+        transform: translateX(0);
+      }
+      .notif-dropdown {
+        width: 280px !important;
+        left: 0 !important;
+        right: auto !important;
+        bottom: 70px !important;
+      }
+      .float-review-btn {
+        bottom: 1.2rem !important;
+        right: 1.2rem !important;
+        padding: 0.5rem 1rem !important;
+        font-size: 0.85rem !important;
+      }
+      .modal {
+        width: 95% !important;
+        margin: 1rem;
+        max-height: 85vh;
+      }
     }
-    @keyframes scale {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.1); }
-      100% { transform: scale(1); }
-    }
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-4px); }
-      75% { transform: translateX(4px); }
-    }
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
-    }
-    @keyframes slideInRight {
-      from { opacity: 0; transform: translateX(50px); }
-      to { opacity: 1; transform: translateX(0); }
-    }
-    @keyframes glowPulse {
-      0% { box-shadow: 0 0 0 0 var(--glow); }
-      70% { box-shadow: 0 0 0 10px rgba(88,101,242,0); }
-      100% { box-shadow: 0 0 0 0 rgba(88,101,242,0); }
-    }
-    .animate-bounce { animation: bounce 0.5s ease; }
-    .animate-scale { animation: scale 0.3s ease; }
-    .animate-shake { animation: shake 0.4s ease; }
-    .animate-fadeUp { animation: fadeInUp 0.4s ease-out; }
-    .animate-slideIn { animation: slideInRight 0.3s ease-out; }
-    .animate-pulse { animation: pulse 0.6s ease; }
-    .animate-glow { animation: glowPulse 0.8s ease; }
 
-    /* ======= NOTIFICATION SYSTEM ======= */
+    /* sidebar toggle button للهاتف */
+    .menu-toggle {
+      display: none;
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 0.6rem;
+      z-index: 1200;
+      cursor: pointer;
+      font-size: 1.4rem;
+      backdrop-filter: blur(8px);
+    }
+    @media (max-width: 768px) {
+      .menu-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+
+    /* notif bell animations */
     .notif-container {
       position: fixed;
       bottom: 20px;
@@ -89,15 +120,16 @@
       background: var(--bg3);
       border: 1px solid var(--border);
       border-radius: 50%;
-      width: 55px;
-      height: 55px;
+      width: 52px;
+      height: 52px;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
       font-size: 1.6rem;
       position: relative;
-      transition: all 0.2s;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     }
     .notif-bell:hover {
       border-color: var(--accent);
@@ -111,61 +143,73 @@
       color: white;
       font-size: 0.7rem;
       font-weight: bold;
-      min-width: 22px;
-      height: 22px;
-      border-radius: 22px;
+      min-width: 20px;
+      height: 20px;
+      border-radius: 20px;
       display: none;
       align-items: center;
       justify-content: center;
       font-family: var(--mono);
-      padding: 0 6px;
+      padding: 0 5px;
+      animation: pulse 1s infinite;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.2); opacity: 0.8; }
+      100% { transform: scale(1); opacity: 1; }
     }
     .notif-dropdown {
       position: absolute;
       bottom: 70px;
       left: 0;
       width: 320px;
-      max-width: 85vw;
       background: var(--bg2);
       border: 1px solid var(--border);
       border-radius: var(--radius);
       display: none;
       flex-direction: column;
-      max-height: 450px;
+      max-height: 420px;
       overflow-y: auto;
-      z-index: 1001;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      animation: fadeSlideUp 0.2s ease;
     }
     .notif-dropdown.open {
       display: flex;
-      animation: slideInRight 0.3s ease-out;
+    }
+    @keyframes fadeSlideUp {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
     .notif-item {
-      padding: 14px;
+      padding: 12px 14px;
       border-bottom: 1px solid var(--border);
       font-size: 0.85rem;
       cursor: pointer;
       transition: all 0.2s;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
     .notif-item:hover {
       background: var(--bg3);
-      transform: translateX(-5px);
+      transform: translateX(-3px);
     }
     .notif-item.unread {
-      background: rgba(88,101,242,0.15);
+      background: rgba(88, 101, 242, 0.2);
       border-right: 3px solid var(--accent);
     }
     .notif-icon {
-      font-size: 1.3rem;
+      font-size: 1.2rem;
     }
     .notif-content {
       flex: 1;
-    }
-    .notif-title {
-      font-weight: 600;
-      margin-bottom: 3px;
     }
     .notif-time {
       font-size: 0.65rem;
@@ -173,132 +217,36 @@
       margin-top: 4px;
     }
 
-    /* ======= RAINBOW EFFECT ======= */
+    /* rainbow & animations */
     .rainbow-text {
       background: linear-gradient(90deg, #ff0000, #ff7700, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3);
-      -webkit-background-clip: text;
       background-clip: text;
+      -webkit-background-clip: text;
       color: transparent;
       animation: rainbow 3s linear infinite;
     }
     .rainbow-border {
       border: 2px solid transparent;
       background: linear-gradient(90deg, #ff0000, #ff7700, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3) border-box;
-      -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
       mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+      -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
       -webkit-mask-composite: xor;
       mask-composite: exclude;
-      animation: border-rotate 2s linear infinite;
+      animation: borderSpin 2s linear infinite;
     }
     @keyframes rainbow {
       0% { background-position: 0% 50%; }
       100% { background-position: 100% 50%; }
     }
-    @keyframes border-rotate {
+    @keyframes borderSpin {
       0% { background-position: 0% 0%; }
       100% { background-position: 200% 0%; }
     }
 
-    /* ======= LOADER ======= */
-    .loader-screen {
-      position: fixed; inset: 0;
-      background: var(--bg);
-      z-index: 9999;
-      display: flex; align-items: center; justify-content: center;
-      flex-direction: column;
-    }
-    .loader-logo {
-      font-family: var(--mono);
-      font-size: 2.5rem;
-      font-weight: 700;
-      color: var(--accent);
-      letter-spacing: 0.2em;
-    }
-    .loader-bar {
-      width: 200px;
-      height: 3px;
-      background: var(--bg3);
-      border-radius: 99px;
-      margin-top: 1rem;
-      overflow: hidden;
-    }
-    .loader-fill {
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, var(--accent), var(--green));
-      animation: fill 2s ease-out forwards;
-    }
-    @keyframes fill { to { width: 100%; } }
-
-    /* ======= SIDEBAR ======= */
-    .sidebar {
-      position: fixed;
-      top: 0; right: 0;
-      width: var(--sidebar-w);
-      height: 100vh;
-      background: var(--sidebar-bg);
-      border-left: 1px solid var(--border);
-      z-index: 100;
-      overflow-y: auto;
-      transform: translateX(0);
-      transition: transform 0.3s ease;
-    }
-    .sidebar-header {
-      padding: 1.5rem;
-      border-bottom: 1px solid var(--border);
-    }
-    .sidebar-logo {
-      font-family: var(--mono);
-      font-size: 1.3rem;
-      font-weight: 700;
-    }
-    .nav-link {
-      display: flex;
-      align-items: center;
-      gap: 0.7rem;
-      padding: 0.7rem 1.2rem;
-      color: var(--muted);
-      text-decoration: none;
-      font-size: 0.9rem;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .nav-link:hover, .nav-link.active {
-      background: rgba(88,101,242,0.12);
-      color: var(--text);
-      transform: translateX(-5px);
-    }
-    .nav-category-label {
-      font-size: 0.7rem;
-      color: var(--muted);
-      padding: 0.8rem 1.2rem 0.3rem;
-      text-transform: uppercase;
-    }
-
-    /* ======= MAIN ======= */
-    .main-content {
-      margin-right: var(--sidebar-w);
-      padding: 2rem;
-      transition: margin 0.3s;
-    }
-    .page { display: none; animation: fadeInUp 0.4s ease-out; }
-    .page.active { display: block; }
-
-    /* ======= HERO ======= */
-    .hero {
-      padding: 3rem 0;
-      text-align: center;
-    }
-    .hero h1 {
-      font-size: 2.5rem;
-      font-family: var(--mono);
-    }
-    .hero h1 span { color: var(--accent); }
-
-    /* ======= PRODUCTS GRID ======= */
+    /* cards & grid */
     .products-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
       gap: 1.2rem;
     }
     .product-card {
@@ -306,64 +254,39 @@
       border: 1px solid var(--border);
       border-radius: var(--radius);
       overflow: hidden;
-      transition: all 0.3s ease;
+      transition: all 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1);
     }
     .product-card:hover {
       border-color: var(--accent);
-      transform: translateY(-5px) scale(1.02);
-    }
-    .product-card-img {
-      width: 100%;
-      height: 130px;
-      background: var(--bg3);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-    }
-    .product-card-img img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .product-card-body {
-      padding: 1rem;
-    }
-    .product-card-name {
-      font-weight: 700;
-      margin-bottom: 0.3rem;
-    }
-    .product-card-price {
-      color: var(--green);
-      font-family: var(--mono);
-      font-size: 1rem;
+      transform: translateY(-4px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
     }
     .btn-order {
       background: var(--accent);
       color: white;
       border: none;
-      padding: 0.4rem 1rem;
-      border-radius: 6px;
+      padding: 0.5rem;
+      border-radius: 10px;
       cursor: pointer;
       width: 100%;
-      margin-top: 0.5rem;
-      transition: all 0.2s;
+      margin-top: 0.7rem;
+      font-weight: 600;
+      transition: 0.2s;
     }
-    .btn-order:hover {
-      transform: scale(1.02);
-      background: var(--accent2);
-    }
+    .btn-order:active { transform: scale(0.97); }
 
-    /* ======= MODALS ======= */
+    /* modal & admin */
     .modal-overlay {
       display: none;
       position: fixed; inset: 0;
       background: rgba(0,0,0,0.85);
-      z-index: 1000;
+      backdrop-filter: blur(4px);
+      z-index: 2000;
       align-items: center;
       justify-content: center;
     }
-    .modal-overlay.open { display: flex; }
+    .modal-overlay.open { display: flex; animation: fadeIn 0.2s; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     .modal {
       background: var(--bg2);
       border: 1px solid var(--border);
@@ -371,15 +294,14 @@
       padding: 1.5rem;
       width: 90%;
       max-width: 500px;
-      max-height: 80vh;
+      max-height: 85vh;
       overflow-y: auto;
-      animation: scale 0.3s ease;
     }
     .input-field {
       background: var(--bg3);
       border: 1px solid var(--border);
       padding: 0.7rem;
-      border-radius: 8px;
+      border-radius: 12px;
       color: var(--text);
       width: 100%;
       margin: 0.5rem 0;
@@ -389,125 +311,36 @@
       color: white;
       border: none;
       padding: 0.7rem;
-      border-radius: 8px;
+      border-radius: 12px;
       width: 100%;
       cursor: pointer;
-      transition: all 0.2s;
+      font-weight: bold;
     }
-    .btn-primary:hover {
-      transform: scale(1.02);
-    }
-    .stars-row {
-      display: flex;
-      gap: 0.3rem;
-      font-size: 1.8rem;
-      direction: ltr;
-      justify-content: center;
-      margin: 0.5rem 0;
-    }
-    .star {
-      cursor: pointer;
-      color: var(--muted);
-      transition: transform 0.2s;
-    }
-    .star:hover { transform: scale(1.2); }
-    .star.active { color: var(--yellow); }
+    .star { cursor: pointer; font-size: 1.8rem; transition: 0.1s; }
+    .star.active { color: var(--yellow); text-shadow: 0 0 6px gold; }
     .admin-item {
       background: var(--bg3);
       padding: 0.7rem;
-      border-radius: 8px;
-      margin-bottom: 0.5rem;
+      border-radius: 12px;
+      margin-bottom: 0.6rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      flex-wrap: wrap;
     }
-    .btn-delete {
-      background: var(--red);
-      color: white;
-      border: none;
-      padding: 0.3rem 0.7rem;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    .admin-tab {
-      background: var(--bg3);
-      border: none;
-      color: var(--text);
-      padding: 0.4rem 0.8rem;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-    .admin-tab.active {
-      background: var(--accent);
-    }
-    .admin-panel { display: none; }
-    .admin-panel:first-of-type { display: block; }
+    .btn-delete { background: var(--red); border: none; padding: 0.3rem 0.8rem; border-radius: 8px; color: white; cursor: pointer; }
     .social-btn {
       background: var(--bg3);
       padding: 0.5rem 1rem;
-      border-radius: 8px;
+      border-radius: 40px;
       color: var(--text);
       text-decoration: none;
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
-      transition: all 0.2s;
+      transition: 0.2s;
     }
-    .social-btn:hover {
-      transform: translateY(-3px);
-      border-color: var(--accent);
-    }
-
-    /* Mobile Menu Button */
-    .menu-toggle {
-      display: none;
-      position: fixed;
-      top: 15px;
-      right: 15px;
-      background: var(--bg3);
-      border: 1px solid var(--border);
-      border-radius: 50%;
-      width: 45px;
-      height: 45px;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      z-index: 101;
-      font-size: 1.5rem;
-    }
-
-    /* ======= RESPONSIVE ======= */
-    @media (max-width: 768px) {
-      .menu-toggle {
-        display: flex;
-      }
-      .sidebar {
-        transform: translateX(100%);
-        width: 80%;
-        max-width: 280px;
-        z-index: 200;
-      }
-      .sidebar.open {
-        transform: translateX(0);
-      }
-      .main-content {
-        margin-right: 0;
-        padding: 1rem;
-        padding-top: 70px;
-      }
-      .hero h1 { font-size: 1.8rem; }
-      .products-grid {
-        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-        gap: 0.8rem;
-      }
-      .notif-dropdown {
-        width: 280px;
-        left: -20px;
-      }
-    }
-
-    /* Float Review Button */
+    .social-btn:hover { background: var(--accent); color: white; }
+    .page-header { margin-bottom: 1.5rem; }
     .float-review-btn {
       position: fixed;
       bottom: 2rem;
@@ -516,33 +349,35 @@
       color: #fff;
       border: none;
       padding: 0.7rem 1.4rem;
-      border-radius: 99px;
+      border-radius: 60px;
       cursor: pointer;
       z-index: 300;
       font-weight: bold;
+      box-shadow: 0 4px 14px rgba(88,101,242,0.4);
       transition: all 0.2s;
     }
-    .float-review-btn:hover {
-      transform: scale(1.05);
-      background: var(--accent2);
+    .float-review-btn:active { transform: scale(0.96); }
+    .about-section {
+      background: var(--card-bg);
+      padding: 1.5rem;
+      border-radius: var(--radius);
+      line-height: 1.8;
     }
   </style>
 </head>
 <body>
 
-<div class="loader-screen" id="loader">
-  <div class="loader-logo">DOBLEX</div>
-  <div class="loader-bar"><div class="loader-fill"></div></div>
-  <div style="margin-top: 1rem; font-size: 0.8rem; color: var(--muted)">جاري التحميل...</div>
+<div class="loader-screen" id="loader" style="position:fixed; inset:0; background:var(--bg); z-index:9999; display:flex; align-items:center; justify-content:center; flex-direction:column;">
+  <div class="loader-logo" style="font-family:var(--mono); font-size:2.2rem;">DOBLEX</div>
+  <div style="width:200px; height:3px; background:var(--bg3); border-radius:99px; margin-top:1rem; overflow:hidden;"><div style="height:100%; width:0%; background:linear-gradient(90deg, var(--accent), var(--green)); animation: fillLoader 1.8s ease forwards;"></div></div>
+  <div style="margin-top:1rem; font-size:0.8rem; color:var(--muted)">جاري التحميل...</div>
 </div>
+<style> @keyframes fillLoader { to { width:100%; } } </style>
 
-<div class="menu-toggle" id="menu-toggle">☰</div>
-
+<div class="menu-toggle" id="menuToggle">☰</div>
 <div class="sidebar" id="sidebar">
-  <div class="sidebar-header">
-    <div class="sidebar-logo">DOBLEX<span style="color:var(--accent)">SHOP</span></div>
-  </div>
-  <div class="nav-category-label">الرئيسية</div>
+  <div class="sidebar-header" style="padding:1.5rem;"><div class="sidebar-logo" style="font-family:var(--mono); font-size:1.5rem;">DOBLEX<span style="color:var(--accent)">SHOP</span></div></div>
+  <div class="nav-category-label" style="font-size:0.7rem; color:var(--muted); padding:0.8rem 1.2rem 0.3rem;">الرئيسية</div>
   <a class="nav-link active" data-page="home">🏠 الرئيسية</a>
   <a class="nav-link" data-page="offers">🔥 عروض خاصة</a>
   <a class="nav-link" data-page="discounts">💰 خصومات</a>
@@ -556,32 +391,11 @@
   <a class="nav-link" data-page="vouchers">🎫 فاوتشرات</a>
   <div class="nav-category-label">المزيد</div>
   <a class="nav-link" data-page="about">ℹ️ عن الموقع</a>
-  <a class="nav-link" data-page="aboutus">👥 عن أنفسنا</a>
   <a class="nav-link" id="open-admin-btn">👑 لوحة التحكم</a>
 </div>
 
 <div class="main-content" id="main-content">
-  <div class="page active" id="page-home">
-    <div class="hero">
-      <h1>DOBLEX <span>SHOP</span></h1>
-      <p style="color:var(--muted); margin-top: 0.5rem">أسرع متجر رقمي لتلبية احتياجاتك</p>
-    </div>
-    <div style="display: flex; gap: 1rem; justify-content: center; margin-bottom: 2rem; flex-wrap: wrap;">
-      <div style="background: var(--card-bg); padding: 1rem; border-radius: var(--radius); text-align: center;">
-        <div id="stat-products" style="font-size: 2rem; font-family: var(--mono); color: var(--accent);">0</div>
-        <div style="font-size: 0.8rem; color: var(--muted)">منتج</div>
-      </div>
-      <div style="background: var(--card-bg); padding: 1rem; border-radius: var(--radius); text-align: center;">
-        <div id="stat-orders" style="font-size: 2rem; font-family: var(--mono); color: var(--accent);">0</div>
-        <div style="font-size: 0.8rem; color: var(--muted)">طلب</div>
-      </div>
-      <div style="background: var(--card-bg); padding: 1rem; border-radius: var(--radius); text-align: center;">
-        <div id="stat-reviews" style="font-size: 2rem; font-family: var(--mono); color: var(--accent);">0</div>
-        <div style="font-size: 0.8rem; color: var(--muted)">تقييم</div>
-      </div>
-    </div>
-  </div>
-
+  <div class="page active" id="page-home"><div class="hero" style="padding:2rem 0; text-align:center;"><h1 style="font-family:var(--mono); font-size:2.8rem;">DOBLEX <span style="color:var(--accent)">SHOP</span></h1><p style="color:var(--muted);">أسرع متجر رقمي لتلبية احتياجاتك</p></div><div style="display:flex; gap:1rem; justify-content:center; margin-bottom:2rem; flex-wrap:wrap;"><div style="background:var(--card-bg); padding:1rem; border-radius:var(--radius); text-align:center;"><div id="stat-products" style="font-size:2rem; font-family:var(--mono); color:var(--accent);">0</div><div>منتج</div></div><div style="background:var(--card-bg); padding:1rem; border-radius:var(--radius); text-align:center;"><div id="stat-orders" style="font-size:2rem; font-family:var(--mono); color:var(--accent);">0</div><div>طلب</div></div><div style="background:var(--card-bg); padding:1rem; border-radius:var(--radius); text-align:center;"><div id="stat-reviews" style="font-size:2rem; font-family:var(--mono); color:var(--accent);">0</div><div>تقييم</div></div></div></div>
   <div class="page" id="page-offers"><div class="page-header"><h2>🔥 عروض خاصة</h2></div><div class="products-grid" id="grid-offers"></div></div>
   <div class="page" id="page-discounts"><div class="page-header"><h2 class="rainbow-text">💰 خصومات محدودة</h2></div><div class="products-grid" id="grid-discounts"></div></div>
   <div class="page" id="page-servers"><div class="page-header"><h2>🖥️ سيرفرات</h2></div><div class="products-grid" id="grid-servers"></div></div>
@@ -591,712 +405,84 @@
   <div class="page" id="page-apps"><div class="page-header"><h2>📱 تطبيقات</h2></div><div class="products-grid" id="grid-apps"></div></div>
   <div class="page" id="page-wallets"><div class="page-header"><h2>👛 محافظ</h2></div><div class="products-grid" id="grid-wallets"></div></div>
   <div class="page" id="page-vouchers"><div class="page-header"><h2>🎫 فاوتشرات</h2></div><div class="products-grid" id="grid-vouchers"></div></div>
-  <div class="page" id="page-about">
-    <div class="page-header"><h2>ℹ️ عن الموقع</h2></div>
-    <div id="about-text" style="background: var(--card-bg); padding: 1.5rem; border-radius: var(--radius); line-height: 1.8;"></div>
-    <div id="socials-grid" style="display: flex; gap: 0.8rem; flex-wrap: wrap; margin-top: 1.5rem;"></div>
-  </div>
-  <div class="page" id="page-aboutus">
-    <div class="page-header"><h2>👥 عن أنفسنا</h2></div>
-    <div id="aboutus-text" style="background: var(--card-bg); padding: 1.5rem; border-radius: var(--radius); line-height: 1.8;"></div>
-  </div>
+  <div class="page" id="page-about"><div class="page-header"><h2>ℹ️ عن الموقع</h2></div><div id="about-text" class="about-section"></div><div id="socials-grid" style="display:flex; gap:0.8rem; flex-wrap:wrap; margin-top:1.5rem;"></div></div>
 </div>
 
-<div class="notif-container">
-  <div class="notif-bell" id="notif-bell">
-    🔔
-    <span class="notif-badge" id="notif-badge"></span>
-  </div>
-  <div class="notif-dropdown" id="notif-dropdown"></div>
-</div>
+<div class="notif-container"><div class="notif-bell" id="notif-bell">🔔<span class="notif-badge" id="notif-badge"></span></div><div class="notif-dropdown" id="notif-dropdown"></div></div>
 
-<!-- MODALS -->
-<div class="modal-overlay" id="admin-overlay">
-  <div class="modal">
-    <div style="display: flex; justify-content: space-between; align-items: center;">
-      <h3>👑 لوحة التحكم</h3>
-      <button id="close-admin" style="background: none; border: none; color: var(--muted); font-size: 1.5rem; cursor: pointer;">✖</button>
-    </div>
-    <div id="admin-login-view">
-      <input type="password" id="admin-password-input" class="input-field" placeholder="كلمة المرور">
-      <button class="btn-primary" onclick="adminLogin()">دخول</button>
-      <div id="admin-login-error" style="color: var(--red); margin-top: 0.5rem;"></div>
-    </div>
-    <div id="admin-dashboard" style="display: none;">
-      <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;">
-        <button class="admin-tab active" onclick="adminTab('products')">📦 المنتجات</button>
-        <button class="admin-tab" onclick="adminTab('orders')">🛍️ الطلبات</button>
-        <button class="admin-tab" onclick="adminTab('reviews')">⭐ التقييمات</button>
-        <button class="admin-tab" onclick="adminTab('socials')">🔗 الروابط</button>
-        <button class="admin-tab" onclick="adminTab('aboutus')">👥 عن أنفسنا</button>
-        <button class="admin-tab" onclick="adminTab('settings')">⚙️ الإعدادات</button>
-      </div>
-      <div id="panel-products" class="admin-panel">
-        <h3>➕ إضافة منتج</h3>
-        <select id="prod-category" class="input-field">
-          <option value="offers">عروض خاصة</option><option value="discounts">خصومات</option><option value="servers">سيرفرات</option>
-          <option value="boosts">بوستات</option><option value="nitro9">نايترو 9</option><option value="gifts">هدايا</option>
-          <option value="apps">تطبيقات</option><option value="wallets">محافظ</option><option value="vouchers">فاوتشرات</option>
-        </select>
-        <input type="text" id="prod-name" class="input-field" placeholder="اسم المنتج">
-        <input type="text" id="prod-price" class="input-field" placeholder="السعر">
-        <textarea id="prod-desc" class="input-field" placeholder="وصف المنتج"></textarea>
-        <input type="file" id="prod-image-file" class="input-field" accept="image/*">
-        <div id="image-preview" style="margin: 0.5rem 0;"></div>
-        <button class="btn-primary" onclick="addProduct()">➕ إضافة</button>
-        <div style="margin: 1rem 0;"><h3>📋 المنتجات الحالية</h3></div>
-        <div id="admin-products-list"></div>
-      </div>
-      <div id="panel-orders" class="admin-panel" style="display: none;"><div id="admin-orders-list"></div></div>
-      <div id="panel-reviews" class="admin-panel" style="display: none;"><div id="admin-reviews-list"></div></div>
-      <div id="panel-socials" class="admin-panel" style="display: none;">
-        <input type="text" id="social-name" class="input-field" placeholder="الاسم">
-        <input type="text" id="social-url" class="input-field" placeholder="الرابط">
-        <input type="text" id="social-icon" class="input-field" placeholder="الأيقونة">
-        <button class="btn-primary" onclick="addSocial()">➕ إضافة رابط</button>
-        <div id="socials-list" style="margin-top: 1rem;"></div>
-      </div>
-      <div id="panel-aboutus" class="admin-panel" style="display: none;">
-        <textarea id="aboutus-edit-text" class="input-field" rows="6" placeholder="نص عن أنفسنا - من نحن، رؤيتنا، خدماتنا..."></textarea>
-        <button class="btn-primary" onclick="saveAboutUs()">💾 حفظ</button>
-      </div>
-      <div id="panel-settings" class="admin-panel" style="display: none;">
-        <textarea id="about-edit-text" class="input-field" rows="4" placeholder="نص عن الموقع"></textarea>
-        <button class="btn-primary" onclick="saveAbout()">💾 حفظ</button>
-        <div style="margin: 1rem 0;"><h3>🔑 تغيير كلمة المرور</h3></div>
-        <input type="password" id="new-admin-pass" class="input-field" placeholder="كلمة مرور جديدة">
-        <button class="btn-primary" onclick="changeAdminPass()">تغيير</button>
-        <div style="margin: 1rem 0;"><h3>☁️ إعدادات Supabase</h3></div>
-        <input type="text" id="sb-url-input" class="input-field" placeholder="Supabase URL">
-        <input type="text" id="sb-key-input" class="input-field" placeholder="Supabase anon key">
-        <button class="btn-primary" onclick="saveSupabaseConfig()">حفظ والاتصال</button>
-      </div>
-    </div>
-  </div>
-</div>
+<!-- Modals -->
+<div class="modal-overlay" id="admin-overlay"><div class="modal"><div style="display:flex; justify-content:space-between;"><h3>👑 لوحة التحكم</h3><button id="close-admin" style="background:none; border:none; color:var(--muted); font-size:1.5rem;">✖</button></div><div id="admin-login-view"><input type="password" id="admin-password-input" class="input-field" placeholder="كلمة المرور"><button class="btn-primary" onclick="adminLogin()">دخول</button><div id="admin-login-error" style="color:var(--red);"></div></div><div id="admin-dashboard" style="display:none;"><div style="display:flex; gap:0.5rem; flex-wrap:wrap;"><button class="admin-tab active" onclick="adminTab('products')">📦 المنتجات</button><button class="admin-tab" onclick="adminTab('orders')">🛍️ الطلبات</button><button class="admin-tab" onclick="adminTab('reviews')">⭐ التقييمات</button><button class="admin-tab" onclick="adminTab('socials')">🔗 الروابط</button><button class="admin-tab" onclick="adminTab('settings')">⚙️ الإعدادات</button><button class="admin-tab" onclick="adminTab('aboutus')">📝 من نحن</button></div><div id="panel-products" class="admin-panel"><h3>➕ إضافة منتج</h3><select id="prod-category" class="input-field"><option value="offers">عروض خاصة</option><option value="discounts">خصومات</option><option value="servers">سيرفرات</option><option value="boosts">بوستات</option><option value="nitro9">نايترو 9</option><option value="gifts">هدايا</option><option value="apps">تطبيقات</option><option value="wallets">محافظ</option><option value="vouchers">فاوتشرات</option></select><input type="text" id="prod-name" placeholder="اسم المنتج" class="input-field"><input type="text" id="prod-price" placeholder="السعر" class="input-field"><textarea id="prod-desc" placeholder="وصف المنتج" class="input-field"></textarea><input type="file" id="prod-image-file" class="input-field" accept="image/*"><div id="image-preview"></div><button class="btn-primary" onclick="addProduct()">➕ إضافة</button><div style="margin:1rem 0;"><h3>📋 المنتجات</h3></div><div id="admin-products-list"></div></div><div id="panel-orders" class="admin-panel" style="display:none;"><div id="admin-orders-list"></div></div><div id="panel-reviews" class="admin-panel" style="display:none;"><div id="admin-reviews-list"></div></div><div id="panel-socials" class="admin-panel" style="display:none;"><input type="text" id="social-name" placeholder="الاسم" class="input-field"><input type="text" id="social-url" placeholder="الرابط" class="input-field"><input type="text" id="social-icon" placeholder="الأيقونة" class="input-field"><button class="btn-primary" onclick="addSocial()">➕ إضافة رابط</button><div id="socials-list" style="margin-top:1rem;"></div></div><div id="panel-settings" class="admin-panel" style="display:none;"><textarea id="about-edit-text" class="input-field" rows="4" placeholder="نص عن الموقع"></textarea><button class="btn-primary" onclick="saveAbout()">💾 حفظ</button><div style="margin:1rem 0;"><h3>🔑 تغيير كلمة المرور</h3></div><input type="password" id="new-admin-pass" class="input-field" placeholder="كلمة مرور جديدة"><button class="btn-primary" onclick="changeAdminPass()">تغيير</button><div><h3>☁️ Supabase</h3></div><input type="text" id="sb-url-input" class="input-field" placeholder="URL"><input type="text" id="sb-key-input" class="input-field" placeholder="anon key"><button class="btn-primary" onclick="saveSupabaseConfig()">حفظ والاتصال</button></div><div id="panel-aboutus" class="admin-panel" style="display:none;"><h3>✍️ تعريف عن المتجر (من نحن)</h3><textarea id="aboutus-textarea" class="input-field" rows="6" placeholder="اكتب نص تعريف المتجر، الفريق، الرؤية..."></textarea><button class="btn-primary" onclick="saveAboutUs()">💾 حفظ من نحن</button></div></div></div></div>
 
-<div class="modal-overlay" id="order-overlay">
-  <div class="modal">
-    <h3>🛍️ تقديم طلب</h3>
-    <div id="order-product-info"></div>
-    <input type="text" id="order-name" class="input-field" placeholder="اسمك الكامل">
-    <input type="text" id="order-discord" class="input-field" placeholder="معرف ديسكورد">
-    <textarea id="order-note" class="input-field" placeholder="ملاحظات"></textarea>
-    <button class="btn-primary" onclick="submitOrder()">إرسال الطلب</button>
-    <button id="close-order" style="margin-top: 0.5rem; background: none; border: 1px solid var(--border); padding: 0.5rem; border-radius: 8px; width: 100%; cursor: pointer;">إغلاق</button>
-  </div>
-</div>
-
-<div class="modal-overlay" id="review-overlay">
-  <div class="modal">
-    <h3>⭐ أضف تقييمك</h3>
-    <input type="text" id="review-name" class="input-field" placeholder="اسمك">
-    <div class="stars-row" id="stars-row">
-      <span class="star" data-v="1">☆</span><span class="star" data-v="2">☆</span><span class="star" data-v="3">☆</span><span class="star" data-v="4">☆</span><span class="star" data-v="5">☆</span>
-    </div>
-    <textarea id="review-text" class="input-field" placeholder="رأيك عن المتجر"></textarea>
-    <button class="btn-primary" onclick="submitReview()">إرسال التقييم</button>
-    <button id="close-review" style="margin-top: 0.5rem; background: none; border: 1px solid var(--border); padding: 0.5rem; border-radius: 8px; width: 100%; cursor: pointer;">إغلاق</button>
-  </div>
-</div>
+<div class="modal-overlay" id="order-overlay"><div class="modal"><h3>🛍️ تقديم طلب</h3><div id="order-product-info"></div><input type="text" id="order-name" class="input-field" placeholder="اسمك الكامل"><input type="text" id="order-discord" class="input-field" placeholder="معرف ديسكورد"><textarea id="order-note" class="input-field" placeholder="ملاحظات"></textarea><button class="btn-primary" onclick="submitOrder()">إرسال الطلب</button><button id="close-order" style="margin-top:0.5rem; background:none; border:1px solid var(--border); padding:0.5rem; border-radius:12px; width:100%;">إغلاق</button></div></div>
+<div class="modal-overlay" id="review-overlay"><div class="modal"><h3>⭐ أضف تقييمك</h3><input type="text" id="review-name" class="input-field" placeholder="اسمك"><div class="stars-row" id="stars-row" style="display:flex; gap:5px; justify-content:center;"><span class="star" data-v="1">☆</span><span class="star" data-v="2">☆</span><span class="star" data-v="3">☆</span><span class="star" data-v="4">☆</span><span class="star" data-v="5">☆</span></div><textarea id="review-text" class="input-field" placeholder="رأيك عن المتجر"></textarea><button class="btn-primary" onclick="submitReview()">إرسال التقييم</button><button id="close-review" style="margin-top:0.5rem; background:none; border:1px solid var(--border); border-radius:12px; padding:0.5rem;">إغلاق</button></div></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-// Supabase Configuration
 let SUPABASE_URL = 'https://ldrrkdaznmiomqdoxaom.supabase.co';
 let SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxkcnJrZGF6bm1pb21xZG94YW9tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0MTY5NjksImV4cCI6MjA5MDk5Mjk2OX0.jrZ9box4sp46-o1jbk_Atr8VrodQ7v_sccpPw-rB2NY';
-
-// 1. تأكد أن هذا السطر يستخدم let وليس const
-let supabase = null; 
+let supabase = null;
 
 function initSupabase() {
   if (SUPABASE_URL && SUPABASE_KEY) {
-    try {
-      // 2. التعديل هنا: استخدمنا window.supabasejs لضمان عدم التداخل مع اسم المتغير
-      if (window.supabase) {
-          supabase = window.supabase.createClient(SUPABASE_URL.trim(), SUPABASE_KEY.trim());
-      } else if (window.supabasejs) {
-          supabase = window.supabasejs.createClient(SUPABASE_URL.trim(), SUPABASE_KEY.trim());
-      }
-      
-      console.log('✅ Supabase connected');
-      return true;
-    } catch (e) {
-      console.warn('Supabase init failed:', e);
-      return false;
-    }
-  }
-  return false;
+    try { supabase = window.supabase.createClient(SUPABASE_URL.trim(), SUPABASE_KEY.trim()); console.log('✅ Supabase ready'); return true; } catch(e) { console.warn(e); return false; }
+  } return false;
 }
+initSupabase();
+const ADMIN_PASS_KEY = 'soblex_admin_pass';
+function getAdminPass() { return localStorage.getItem(ADMIN_PASS_KEY) || 'dobleX2024'; }
 
-const ADMIN_PASS_KEY = 'doble_admin_pass';
-function getAdminPass() { return localStorage.getItem(ADMIN_PASS_KEY) || 'doble2024'; }
-
-// ======= NOTIFICATIONS SYSTEM =======
 let notifications = [];
-let currentUserId = localStorage.getItem('visitor_id') || 'visitor_' + Date.now();
-if (!localStorage.getItem('visitor_id')) localStorage.setItem('visitor_id', currentUserId);
-
-async function loadNotifications() {
-  if (!supabase) return;
-  const { data } = await supabase.from('notifications').select('*').eq('user_id', currentUserId).order('created_at', { ascending: false }).limit(30);
-  notifications = data || [];
-  updateNotificationBadge();
-  renderNotifications();
+async function loadNotifications() { if(!supabase) return; const {data}=await supabase.from('notifications').select('*').order('created_at',{ascending:false}).limit(30); notifications=data||[]; renderNotifications(); updateBadge(); }
+async function getUnreadCount() { if(!supabase) return 0; const {count}=await supabase.from('notifications').select('*',{count:'exact',head:true}).eq('read',false); return count||0; }
+async function updateBadge() { const cnt=await getUnreadCount(); const badge=document.getElementById('notif-badge'); if(badge){ badge.textContent=cnt>0?cnt:''; badge.style.display=cnt>0?'flex':'none'; } }
+function renderNotifications(){ const cont=document.getElementById('notif-dropdown'); if(!cont)return; if(!notifications.length){ cont.innerHTML='<div class="notif-item">لا توجد إشعارات</div>'; return; }
+  cont.innerHTML=notifications.map(n=>`<div class="notif-item ${!n.read?'unread':''}" data-id="${n.id}" data-link="${n.target_link||''}"><span class="notif-icon">🔔</span><div class="notif-content">${n.message}<div class="notif-time">${new Date(n.created_at).toLocaleString('ar')}</div></div></div>`).join('');
+  document.querySelectorAll('.notif-item[data-id]').forEach(el=>{ el.addEventListener('click',async(e)=>{ e.stopPropagation(); const id=el.dataset.id; const link=el.dataset.link; if(supabase)await supabase.from('notifications').update({read:true}).eq('id',id); loadNotifications(); if(link && link.startsWith('#')){ const page=link.slice(1); const navLink=document.querySelector(`.nav-link[data-page="${page}"]`); if(navLink)navLink.click(); } else if(link && link!=''){ window.location.hash=link; } }); });
 }
+window.markNotifById=async function(id){ if(supabase)await supabase.from('notifications').update({read:true}).eq('id',id); loadNotifications(); };
+async function addNotification(message, targetLink=''){ if(!supabase)return; await supabase.from('notifications').insert([{id:Date.now().toString(),message,read:false,created_at:new Date().toISOString(),target_link:targetLink}]); loadNotifications(); }
 
-async function getUnreadCount() {
-  if (!supabase) return 0;
-  const { data } = await supabase.from('notifications').select('id').eq('user_id', currentUserId).eq('read', false);
-  return data?.length || 0;
-}
-
-async function updateNotificationBadge() {
-  const count = await getUnreadCount();
-  const badge = document.getElementById('notif-badge');
-  const bell = document.getElementById('notif-bell');
-  if (badge) {
-    badge.textContent = count > 0 ? count : '';
-    badge.style.display = count > 0 ? 'flex' : 'none';
-  }
-  if (count > 0 && bell) {
-    bell.classList.add('animate-shake');
-    setTimeout(() => bell.classList.remove('animate-shake'), 500);
-  }
-}
-
-function renderNotifications() {
-  const container = document.getElementById('notif-dropdown');
-  if (!container) return;
-  if (notifications.length === 0) {
-    container.innerHTML = '<div class="notif-item">📭 لا توجد إشعارات</div>';
-    return;
-  }
-  container.innerHTML = notifications.map(n => `
-    <div class="notif-item ${!n.read ? 'unread' : ''}" onclick="handleNotificationClick('${n.id}', '${n.target_page || 'home'}')">
-      <div class="notif-icon">${n.icon || '🔔'}</div>
-      <div class="notif-content">
-        <div class="notif-title">${n.title || 'إشعار جديد'}</div>
-        <div>${n.message}</div>
-        <div class="notif-time">${new Date(n.created_at).toLocaleString('ar')}</div>
-      </div>
-    </div>
-  `).join('');
-}
-
-window.handleNotificationClick = async function(id, targetPage) {
-  if (supabase) {
-    await supabase.from('notifications').update({ read: true }).eq('id', id);
-  }
-  // animate removal
-  const badge = document.getElementById('notif-badge');
-  if (badge) badge.classList.add('animate-scale');
-  await loadNotifications();
-  
-  // navigate to target page
-  if (targetPage) {
-    const link = document.querySelector(`.nav-link[data-page="${targetPage}"]`);
-    if (link) {
-      link.click();
-    }
-  }
-  // close dropdown
-  document.getElementById('notif-dropdown').classList.remove('open');
-};
-
-// ======= PRODUCTS =======
-async function getProducts(category = null) {
-  if (!supabase) return [];
-  let query = supabase.from('products').select('*').eq('active', true);
-  if (category) query = query.eq('category', category);
-  const { data } = await query.order('created_at', { ascending: false });
-  return data || [];
-}
-
-async function getAllProducts() {
-  if (!supabase) return [];
-  const { data } = await supabase.from('products').select('*').order('created_at', { ascending: false });
-  return data || [];
-}
-
-function renderProducts(products, gridId) {
-  const grid = document.getElementById(gridId);
-  if (!grid) return;
-  grid.innerHTML = '';
-  if (!products.length) { grid.innerHTML = '<div style="color:var(--muted);text-align:center;padding:2rem;">لا توجد منتجات</div>'; return; }
-  products.forEach(p => {
-    const isDiscount = p.category === 'discounts' || p.category === 'offers';
-    const card = document.createElement('div');
-    card.className = 'product-card';
-    if (isDiscount) card.classList.add('rainbow-border');
-    card.innerHTML = `
-      <div class="product-card-img">
-        ${p.image_url ? `<img src="${p.image_url}" alt="${p.name}" onerror="this.style.display='none'"/>` : '🎁'}
-      </div>
-      <div class="product-card-body">
-        <div class="product-card-name ${isDiscount ? 'rainbow-text' : ''}">${p.name}</div>
-        <div style="font-size:0.75rem;color:var(--muted)">${p.description || ''}</div>
-        <div class="product-card-price">${p.price}</div>
-        <button class="btn-order" onclick="openOrder('${p.id}','${escape(p.name)}','${escape(p.price)}')">طلب</button>
-      </div>
-    `;
-    grid.appendChild(card);
-  });
-}
-
-const categoryMap = {
-  offers: 'grid-offers', discounts: 'grid-discounts', servers: 'grid-servers',
-  boosts: 'grid-boosts', nitro9: 'grid-nitro9', gifts: 'grid-gifts',
-  apps: 'grid-apps', wallets: 'grid-wallets', vouchers: 'grid-vouchers'
-};
-
-async function loadAllPages() {
-  for (const [cat, gridId] of Object.entries(categoryMap)) {
-    const products = await getProducts(cat);
-    renderProducts(products, gridId);
-  }
-}
-
-async function loadStats() {
-  if (!supabase) return;
-  const { count: pCount } = await supabase.from('products').select('*', { count: 'exact', head: true }).eq('active', true);
-  const { count: oCount } = await supabase.from('orders').select('*', { count: 'exact', head: true });
-  const { count: rCount } = await supabase.from('reviews').select('*', { count: 'exact', head: true });
-  document.getElementById('stat-products').textContent = pCount || 0;
-  document.getElementById('stat-orders').textContent = oCount || 0;
-  document.getElementById('stat-reviews').textContent = rCount || 0;
-}
-
-// Image Upload
-let currentImageFile = null;
-document.getElementById('prod-image-file')?.addEventListener('change', (e) => {
-  currentImageFile = e.target.files[0];
-  if (currentImageFile) {
-    const preview = document.getElementById('image-preview');
-    const url = URL.createObjectURL(currentImageFile);
-    preview.innerHTML = `<img src="${url}" style="max-width:100px; border-radius:8px;">`;
-  }
-});
-
-async function uploadImage(file) {
-  if (!supabase || !file) return '';
-  const ext = file.name.split('.').pop();
-  const fileName = `${Date.now()}.${ext}`;
-  const { error } = await supabase.storage.from('product-images').upload(fileName, file);
-  if (error) { console.error(error); return ''; }
-  const { data: { publicUrl } } = supabase.storage.from('product-images').getPublicUrl(fileName);
-  return publicUrl;
-}
-
-window.addProduct = async function() {
-  const category = document.getElementById('prod-category').value;
-  const name = document.getElementById('prod-name').value.trim();
-  const price = document.getElementById('prod-price').value.trim();
-  const description = document.getElementById('prod-desc').value.trim();
-  if (!name || !price) { alert('الاسم والسعر مطلوبان'); return; }
-  let image_url = '';
-  if (currentImageFile) {
-    image_url = await uploadImage(currentImageFile);
-  }
-  const product = {
-    id: Date.now().toString(),
-    category, name, price, description, image_url,
-    active: true, created_at: new Date().toISOString()
-  };
-  if (supabase) {
-    const { error } = await supabase.from('products').insert([product]);
-    if (error) { alert('خطأ: ' + error.message); return; }
-  }
-  document.getElementById('prod-name').value = '';
-  document.getElementById('prod-price').value = '';
-  document.getElementById('prod-desc').value = '';
-  document.getElementById('prod-image-file').value = '';
-  document.getElementById('image-preview').innerHTML = '';
-  currentImageFile = null;
-  alert('✅ تم إضافة المنتج');
-  loadAdminProducts();
-  loadAllPages();
-  loadStats();
-  
-  // Create notification for admin
-  await supabase.from('notifications').insert([{
-    id: Date.now().toString(),
-    user_id: currentUserId,
-    title: 'منتج جديد',
-    message: `تم إضافة منتج جديد: ${name}`,
-    icon: '🆕',
-    read: false,
-    target_page: 'home',
-    created_at: new Date().toISOString()
-  }]);
-  loadNotifications();
-};
-
-async function loadAdminProducts() {
-  const products = await getAllProducts();
-  const list = document.getElementById('admin-products-list');
-  list.innerHTML = '';
-  if (!products.length) { list.innerHTML = '<p>لا توجد منتجات</p>'; return; }
-  products.forEach(p => {
-    const item = document.createElement('div');
-    item.className = 'admin-item';
-    item.innerHTML = `<div><strong>${p.name}</strong><br><small>${p.category} — ${p.price}</small></div>
-                      <button class="btn-delete" onclick="deleteProduct('${p.id}')">حذف</button>`;
-    list.appendChild(item);
-  });
-}
-
-window.deleteProduct = async function(id) {
-  if (!confirm('تأكيد الحذف؟')) return;
-  if (supabase) await supabase.from('products').delete().eq('id', id);
-  loadAdminProducts();
-  loadAllPages();
-  loadStats();
-};
-
-// ======= ORDERS =======
-let currentOrderProduct = null;
-
-window.openOrder = function(id, name, price) {
-  currentOrderProduct = { id: id, name: unescape(name), price: unescape(price) };
-  document.getElementById('order-product-info').innerHTML = `
-    <div style="background:var(--bg3);padding:1rem;border-radius:8px;">
-      <strong>${unescape(name)}</strong><br>${unescape(price)}
-    </div>`;
-  document.getElementById('order-overlay').classList.add('open');
-};
-
-window.submitOrder = async function() {
-  const name = document.getElementById('order-name').value.trim();
-  const discord = document.getElementById('order-discord').value.trim();
-  const note = document.getElementById('order-note').value.trim();
-  if (!name) { alert('الرجاء إدخال اسمك'); return; }
-  if (!currentOrderProduct) { alert('يرجى اختيار منتج أولاً'); return; }
-  const orderData = {
-    id: Date.now().toString(),
-    product_id: currentOrderProduct.id,
-    product_name: currentOrderProduct.name,
-    product_price: currentOrderProduct.price,
-    customer_name: name,
-    discord_id: discord,
-    note: note,
-    status: 'pending',
-    created_at: new Date().toISOString()
-  };
-  const { error } = await supabase.from('orders').insert([orderData]);
-  if (error) { alert('خطأ: ' + error.message); return; }
-  alert('✅ تم إرسال طلبك بنجاح!');
-  document.getElementById('order-overlay').classList.remove('open');
-  
-  // Send notification
-  await supabase.from('notifications').insert([{
-    id: Date.now().toString() + '_notif',
-    user_id: currentUserId,
-    title: 'طلب جديد',
-    message: `تم تقديم طلب جديد من: ${name}`,
-    icon: '🛍️',
-    read: false,
-    target_page: 'home',
-    created_at: new Date().toISOString()
-  }]);
-  loadNotifications();
-  loadStats();
-};
-
-async function loadAdminOrders() {
-  if (!supabase) return;
-  const { data } = await supabase.from('orders').select('*').order('created_at', { ascending: false });
-  const list = document.getElementById('admin-orders-list');
-  list.innerHTML = '';
-  if (!data?.length) { list.innerHTML = '<p>لا توجد طلبات</p>'; return; }
-  data.forEach(o => {
-    const item = document.createElement('div');
-    item.className = 'admin-item';
-    item.innerHTML = `<div><strong>${o.customer_name || 'بدون اسم'}</strong> — ${o.product_name}<br><small>${o.product_price}</small></div>
-                      <div><button class="btn-delete" onclick="markOrderDone('${o.id}')">✅</button>
-                      <button class="btn-delete" onclick="deleteOrder('${o.id}')">🗑️</button></div>`;
-    list.appendChild(item);
-  });
-}
-
-window.markOrderDone = async function(id) {
-  if (supabase) await supabase.from('orders').update({ status: 'done' }).eq('id', id);
-  loadAdminOrders();
-};
-
-window.deleteOrder = async function(id) {
-  if (!confirm('حذف الطلب؟')) return;
-  if (supabase) await supabase.from('orders').delete().eq('id', id);
-  loadAdminOrders();
-  loadStats();
-};
-
-// ======= REVIEWS =======
-let selectedStars = 0;
-function setupStars() {
-  const stars = document.querySelectorAll('.star');
-  stars.forEach(star => {
-    star.addEventListener('click', () => {
-      selectedStars = parseInt(star.getAttribute('data-v'));
-      stars.forEach((s, i) => s.classList.toggle('active', i < selectedStars));
-    });
-  });
-}
-
-window.submitReview = async function() {
-  const name = document.getElementById('review-name').value.trim();
-  const text = document.getElementById('review-text').value.trim();
-  if (!name || !selectedStars) { alert('الاسم والتقييم مطلوبان'); return; }
-  const review = {
-    id: Date.now().toString(),
-    customer_name: name,
-    rating: selectedStars,
-    text: text,
-    created_at: new Date().toISOString()
-  };
-  if (supabase) {
-    const { error } = await supabase.from('reviews').insert([review]);
-    if (error) { alert('خطأ: ' + error.message); return; }
-  }
-  document.getElementById('review-name').value = '';
-  document.getElementById('review-text').value = '';
-  selectedStars = 0;
-  document.querySelectorAll('.star').forEach(s => s.classList.remove('active'));
-  document.getElementById('review-overlay').classList.remove('open');
-  alert('✅ شكراً على تقييمك!');
-  loadStats();
-  await supabase.from('notifications').insert([{
-    id: Date.now().toString(),
-    user_id: currentUserId,
-    title: 'تقييم جديد',
-    message: `تم إضافة تقييم جديد من: ${name}`,
-    icon: '⭐',
-    read: false,
-    target_page: 'home',
-    created_at: new Date().toISOString()
-  }]);
-  loadNotifications();
-};
-
-async function loadAdminReviews() {
-  if (!supabase) return;
-  const { data } = await supabase.from('reviews').select('*').order('created_at', { ascending: false });
-  const list = document.getElementById('admin-reviews-list');
-  list.innerHTML = '';
-  if (!data?.length) { list.innerHTML = '<p>لا توجد تقييمات</p>'; return; }
-  data.forEach(r => {
-    const stars = '★'.repeat(r.rating) + '☆'.repeat(5 - r.rating);
-    const item = document.createElement('div');
-    item.className = 'admin-item';
-    item.innerHTML = `<div><strong>${r.customer_name || 'زائر'}</strong> ${stars}<br>${r.text || ''}</div>
-                      <button class="btn-delete" onclick="deleteReview('${r.id}')">حذف</button>`;
-    list.appendChild(item);
-  });
-}
-
-window.deleteReview = async function(id) {
-  if (!confirm('حذف التقييم؟')) return;
-  if (supabase) await supabase.from('reviews').delete().eq('id', id);
-  loadAdminReviews();
-  loadStats();
-};
-
-// ======= ABOUT & SOCIALS =======
-async function loadAbout() {
-  if (!supabase) return;
-  const { data } = await supabase.from('settings').select('*').eq('key', 'about').single();
-  document.getElementById('about-text').innerHTML = data?.value || 'لا يوجد تعريف';
-  const { data: socials } = await supabase.from('socials').select('*');
-  const grid = document.getElementById('socials-grid');
-  grid.innerHTML = '';
-  socials?.forEach(s => {
-    const a = document.createElement('a');
-    a.href = s.url; a.target = '_blank'; a.className = 'social-btn';
-    a.innerHTML = `${s.icon || '🔗'} ${s.name}`;
-    grid.appendChild(a);
-  });
-}
-
-window.saveAbout = async function() {
-  const text = document.getElementById('about-edit-text').value;
-  if (supabase) await supabase.from('settings').upsert({ key: 'about', value: text });
-  loadAbout();
-  alert('✅ تم الحفظ');
-};
-
-// About Us Section
-async function loadAboutUs() {
-  if (!supabase) return;
-  const { data } = await supabase.from('settings').select('*').eq('key', 'aboutus').single();
-  document.getElementById('aboutus-text').innerHTML = data?.value || 'مرحباً بكم في DOBLEX SHOP! نحن فريق متخصص في تقديم أفضل الخدمات الرقمية. نسعى دائماً لتلبية احتياجات عملائنا بأعلى جودة وأفضل الأسعار.';
-}
-
-window.saveAboutUs = async function() {
-  const text = document.getElementById('aboutus-edit-text').value;
-  if (supabase) await supabase.from('settings').upsert({ key: 'aboutus', value: text });
-  loadAboutUs();
-  alert('✅ تم حفظ معلومات عن أنفسنا');
-};
-
-async function loadAdminSocials() {
-  if (!supabase) return;
-  const { data } = await supabase.from('socials').select('*');
-  const list = document.getElementById('socials-list');
-  list.innerHTML = '';
-  data?.forEach(s => {
-    const item = document.createElement('div');
-    item.className = 'admin-item';
-    item.innerHTML = `<div>${s.icon} ${s.name}<br><small>${s.url}</small></div>
-                      <button class="btn-delete" onclick="deleteSocial('${s.id}')">حذف</button>`;
-    list.appendChild(item);
-  });
-}
-
-window.addSocial = async function() {
-  const name = document.getElementById('social-name').value.trim();
-  const url = document.getElementById('social-url').value.trim();
-  const icon = document.getElementById('social-icon').value.trim();
-  if (!name || !url) { alert('الاسم والرابط مطلوبان'); return; }
-  const social = { id: Date.now().toString(), name, url, icon: icon || '🔗', created_at: new Date().toISOString() };
-  if (supabase) await supabase.from('socials').insert([social]);
-  loadAdminSocials();
-  loadAbout();
-};
-
-window.deleteSocial = async function(id) {
-  if (!confirm('حذف الرابط؟')) return;
-  if (supabase) await supabase.from('socials').delete().eq('id', id);
-  loadAdminSocials();
-  loadAbout();
-};
-
-// ======= ADMIN PANEL =======
-window.adminLogin = function() {
-  const input = document.getElementById('admin-password-input').value;
-  if (input === getAdminPass()) {
-    document.getElementById('admin-login-view').style.display = 'none';
-    document.getElementById('admin-dashboard').style.display = 'block';
-    loadAdminProducts(); loadAdminOrders(); loadAdminReviews(); loadAdminSocials();
-    document.getElementById('about-edit-text').value = document.getElementById('about-text')?.innerText || '';
-    document.getElementById('aboutus-edit-text').value = document.getElementById('aboutus-text')?.innerText || '';
-  } else {
-    document.getElementById('admin-login-error').textContent = '❌ كلمة المرور غلط';
-  }
-};
-
-window.adminTab = function(name) {
-  document.querySelectorAll('.admin-panel').forEach(p => p.style.display = 'none');
-  document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
-  document.getElementById(`panel-${name}`).style.display = 'block';
-  event.target.classList.add('active');
-};
-
-window.changeAdminPass = function() {
-  const newPass = document.getElementById('new-admin-pass').value.trim();
-  if (!newPass || newPass.length < 4) { alert('كلمة المرور قصيرة'); return; }
-  localStorage.setItem(ADMIN_PASS_KEY, newPass);
-  alert('✅ تم التغيير');
-};
-
-window.saveSupabaseConfig = function() {
-  const url = document.getElementById('sb-url-input').value.trim();
-  const key = document.getElementById('sb-key-input').value.trim();
-  if (!url || !key) { alert('املأ الحقول'); return; }
-  localStorage.setItem('sb_url', url);
-  localStorage.setItem('sb_key', key);
-  SUPABASE_URL = url; SUPABASE_KEY = key;
-  initSupabase();
-  alert('✅ تم الحفظ');
-  location.reload();
-};
-
-// ======= NAVIGATION =======
-function setupNav() {
-  document.querySelectorAll('.nav-link[data-page]').forEach(link => {
-    link.addEventListener('click', (e) => {
-      e.preventDefault();
-      const page = link.getAttribute('data-page');
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-      document.getElementById(`page-${page}`).classList.add('active');
-      link.classList.add('active');
-      document.getElementById('sidebar')?.classList.remove('open');
-    });
-  });
-  document.getElementById('open-admin-btn')?.addEventListener('click', () => {
-    document.getElementById('admin-overlay').classList.add('open');
-  });
-  document.getElementById('close-admin')?.addEventListener('click', () => {
-    document.getElementById('admin-overlay').classList.remove('open');
-  });
-  document.getElementById('close-order')?.addEventListener('click', () => {
-    document.getElementById('order-overlay').classList.remove('open');
-  });
-  document.getElementById('close-review')?.addEventListener('click', () => {
-    document.getElementById('review-overlay').classList.remove('open');
-  });
-  
-  // Mobile menu toggle
-  const menuToggle = document.getElementById('menu-toggle');
-  const sidebar = document.getElementById('sidebar');
-  if (menuToggle) {
-    menuToggle.addEventListener('click', () => {
-      sidebar.classList.toggle('open');
-    });
-  }
-  
-  // Notification bell
-  const notifBell = document.getElementById('notif-bell');
-  const notifDropdown = document.getElementById('notif-dropdown');
-  if (notifBell) {
-    notifBell.addEventListener('click', (e) => {
-      e.stopPropagation();
-      notifDropdown.classList.toggle('open');
-      notifBell.classList.add('animate-bounce');
-      setTimeout(() => notifBell.classList.remove('animate-bounce'), 500);
-    });
-  }
-  document.addEventListener('click', (e) => {
-    if (!notifBell?.contains(e.target) && !notifDropdown?.contains(e.target)) {
-      notifDropdown?.classList.remove('open');
-    }
-  });
-}
-
-// Initialize
-window.addEventListener('DOMContentLoaded', async () => {
-  initSupabase();
-  
-  setTimeout(() => {
-    const loader = document.getElementById('loader');
-    if (loader) loader.style.display = 'none';
-  }, 2000);
-  
-  setupNav();
-  setupStars();
-  
-  if (supabase) {
-    await Promise.all([
-      loadAllPages(),
-      loadStats(),
-      loadAbout(),
-      loadAboutUs(),
-      loadNotifications()
-    ]);
-  }
-  
-  if(document.getElementById('sb-url-input')) 
-     document.getElementById('sb-url-input').value = SUPABASE_URL;
-  if(document.getElementById('sb-key-input'))
-     document.getElementById('sb-key-input').value = SUPABASE_KEY;
-});
-
-// Float Review Button
-const floatBtn = document.createElement('button');
-floatBtn.innerHTML = '⭐ أضف تقييم';
-floatBtn.className = 'float-review-btn';
-floatBtn.onclick = () => document.getElementById('review-overlay').classList.add('open');
-document.body.appendChild(floatBtn);
+// products
+async function getProducts(category=null){ if(!supabase)return[]; let q=supabase.from('products').select('*').eq('active',true); if(category)q=q.eq('category',category); const {data}=await q.order('created_at',{ascending:false}); return data||[]; }
+async function getAllProducts(){ if(!supabase)return[]; const {data}=await supabase.from('products').select('*').order('created_at',{ascending:false}); return data||[]; }
+function renderProducts(products,gridId){ const grid=document.getElementById(gridId); if(!grid)return; grid.innerHTML=''; if(!products.length){ grid.innerHTML='<div style="color:var(--muted);text-align:center;padding:2rem;">لا توجد منتجات</div>'; return; }
+  products.forEach(p=>{ const isDiscount=p.category==='discounts'||p.category==='offers'; const card=document.createElement('div'); card.className='product-card'; if(isDiscount)card.classList.add('rainbow-border'); card.innerHTML=`<div class="product-card-img">${p.image_url?`<img src="${p.image_url}" style="width:100%;height:140px;object-fit:cover;" onerror="this.style.display='none'">`:'🎁'}</div><div class="product-card-body"><div class="product-card-name ${isDiscount?'rainbow-text':''}">${p.name}</div><div style="font-size:0.75rem;color:var(--muted)">${p.description||''}</div><div class="product-card-price" style="color:var(--green);">${p.price}</div><button class="btn-order" onclick="openOrder('${p.id}','${escape(p.name)}','${escape(p.price)}')">طلب</button></div>`; grid.appendChild(card); }); }
+const categoryMap={offers:'grid-offers',discounts:'grid-discounts',servers:'grid-servers',boosts:'grid-boosts',nitro9:'grid-nitro9',gifts:'grid-gifts',apps:'grid-apps',wallets:'grid-wallets',vouchers:'grid-vouchers'};
+async function loadAllPages(){ for(const[cat,gridId] of Object.entries(categoryMap)){ const products=await getProducts(cat); renderProducts(products,gridId); } }
+async function loadStats(){ if(!supabase)return; const {count:pCount}=await supabase.from('products').select('*',{count:'exact',head:true}).eq('active',true); const {count:oCount}=await supabase.from('orders').select('*',{count:'exact',head:true}); const {count:rCount}=await supabase.from('reviews').select('*',{count:'exact',head:true}); document.getElementById('stat-products').innerText=pCount||0; document.getElementById('stat-orders').innerText=oCount||0; document.getElementById('stat-reviews').innerText=rCount||0; }
+let currentImageFile=null; document.getElementById('prod-image-file')?.addEventListener('change',(e)=>{ currentImageFile=e.target.files[0]; if(currentImageFile){ const url=URL.createObjectURL(currentImageFile); document.getElementById('image-preview').innerHTML=`<img src="${url}" style="max-width:80px; border-radius:8px;">`; } });
+async function uploadImage(file){ if(!supabase||!file)return''; const ext=file.name.split('.').pop(); const fileName=`${Date.now()}.${ext}`; const {error}=await supabase.storage.from('product-images').upload(fileName,file); if(error)return''; const {data:{publicUrl}}=supabase.storage.from('product-images').getPublicUrl(fileName); return publicUrl; }
+window.addProduct=async function(){ const category=document.getElementById('prod-category').value; const name=document.getElementById('prod-name').value.trim(); const price=document.getElementById('prod-price').value.trim(); const desc=document.getElementById('prod-desc').value.trim(); if(!name||!price){alert('الاسم والسعر مطلوبان');return;} let image_url=''; if(currentImageFile) image_url=await uploadImage(currentImageFile); const product={id:Date.now().toString(),category,name,price,description:desc,image_url,active:true,created_at:new Date().toISOString()}; if(supabase)await supabase.from('products').insert([product]); document.getElementById('prod-name').value=''; document.getElementById('prod-price').value=''; document.getElementById('prod-desc').value=''; document.getElementById('prod-image-file').value=''; document.getElementById('image-preview').innerHTML=''; currentImageFile=null; alert('✅ تم الإضافة'); loadAdminProducts(); loadAllPages(); loadStats(); addNotification(`📦 منتج جديد: ${name}`,'#home'); };
+async function loadAdminProducts(){ const prods=await getAllProducts(); const list=document.getElementById('admin-products-list'); if(!list)return; list.innerHTML=''; prods.forEach(p=>{ const div=document.createElement('div'); div.className='admin-item'; div.innerHTML=`<div><strong>${p.name}</strong><br><small>${p.category} — ${p.price}</small></div><button class="btn-delete" onclick="deleteProduct('${p.id}')">حذف</button>`; list.appendChild(div); }); }
+window.deleteProduct=async function(id){ if(!confirm('حذف المنتج؟'))return; if(supabase)await supabase.from('products').delete().eq('id',id); loadAdminProducts(); loadAllPages(); loadStats(); addNotification(`🗑️ تم حذف منتج`,'#home'); };
+let currentOrderProduct=null;
+window.openOrder=function(id,name,price){ currentOrderProduct={id,name:unescape(name),price:unescape(price)}; document.getElementById('order-product-info').innerHTML=`<div style="background:var(--bg3);padding:1rem;border-radius:12px;"><strong>${unescape(name)}</strong><br>${unescape(price)}</div>`; document.getElementById('order-overlay').classList.add('open'); };
+window.submitOrder=async function(){ const name=document.getElementById('order-name').value.trim(); const discord=document.getElementById('order-discord').value.trim(); const note=document.getElementById('order-note').value.trim(); if(!name){alert('أدخل اسمك');return;} if(!currentOrderProduct){alert('اختر منتج');return;} const orderData={product_id:currentOrderProduct.id,product_name:currentOrderProduct.name,product_price:currentOrderProduct.price,customer_name:name,discord_id:discord,note:note,status:'pending',created_at:new Date().toISOString()}; if(supabase){ const {error}=await supabase.from('orders').insert([orderData]); if(error){alert('خطأ:'+error.message);return;} } alert('✅ تم إرسال الطلب'); document.getElementById('order-overlay').classList.remove('open'); addNotification(`🛒 طلب جديد من ${name} : ${currentOrderProduct.name}`,'#home'); loadAdminOrders(); loadStats(); };
+async function loadAdminOrders(){ if(!supabase)return; const {data}=await supabase.from('orders').select('*').order('created_at',{ascending:false}); const list=document.getElementById('admin-orders-list'); if(!list)return; list.innerHTML=''; if(!data?.length){list.innerHTML='<p>لا توجد طلبات</p>';return;} data.forEach(o=>{ const div=document.createElement('div'); div.className='admin-item'; div.innerHTML=`<div><strong>${o.customer_name}</strong> — ${o.product_name}<br><small>${o.product_price}</small></div><div><button class="btn-delete" onclick="markOrderDone('${o.id}')">✅</button><button class="btn-delete" onclick="deleteOrder('${o.id}')">🗑️</button></div>`; list.appendChild(div); }); }
+window.markOrderDone=async function(id){ if(supabase)await supabase.from('orders').update({status:'done'}).eq('id',id); loadAdminOrders(); addNotification(`✅ تم اكتمال طلب`,'#home'); };
+window.deleteOrder=async function(id){ if(!confirm('حذف الطلب؟'))return; if(supabase)await supabase.from('orders').delete().eq('id',id); loadAdminOrders(); loadStats(); };
+let selectedStars=0; function setupStars(){ const stars=document.querySelectorAll('.star'); stars.forEach(star=>{ star.addEventListener('click',()=>{ selectedStars=parseInt(star.dataset.v); stars.forEach((s,i)=>s.classList.toggle('active',i<selectedStars)); }); }); }
+window.submitReview=async function(){ const name=document.getElementById('review-name').value.trim(); const text=document.getElementById('review-text').value.trim(); if(!name||!selectedStars){alert('الاسم والتقييم مطلوبان');return;} const review={id:Date.now().toString(),customer_name:name,rating:selectedStars,text:text,created_at:new Date().toISOString()}; if(supabase)await supabase.from('reviews').insert([review]); document.getElementById('review-name').value=''; document.getElementById('review-text').value=''; selectedStars=0; document.querySelectorAll('.star').forEach(s=>s.classList.remove('active')); document.getElementById('review-overlay').classList.remove('open'); alert('⭐ شكراً لتقييمك'); loadStats(); addNotification(`⭐ تقييم جديد من ${name}`,'#home'); };
+async function loadAdminReviews(){ if(!supabase)return; const {data}=await supabase.from('reviews').select('*').order('created_at',{ascending:false}); const list=document.getElementById('admin-reviews-list'); if(!list)return; list.innerHTML=''; data?.forEach(r=>{ const stars='★'.repeat(r.rating)+'☆'.repeat(5-r.rating); const div=document.createElement('div'); div.className='admin-item'; div.innerHTML=`<div><strong>${r.customer_name}</strong> ${stars}<br>${r.text||''}</div><button class="btn-delete" onclick="deleteReview('${r.id}')">حذف</button>`; list.appendChild(div); }); }
+window.deleteReview=async function(id){ if(!confirm('حذف التقييم؟'))return; if(supabase)await supabase.from('reviews').delete().eq('id',id); loadAdminReviews(); loadStats(); };
+async function loadAbout(){ if(!supabase)return; const {data}=await supabase.from('settings').select('*').eq('key','about').single(); document.getElementById('about-text').innerHTML=data?.value||'مرحباً بكم في دوبلكس شوب، متجر رقمي متكامل يوفر أفضل العروض.'; const {data:socials}=await supabase.from('socials').select('*'); const grid=document.getElementById('socials-grid'); if(grid){ grid.innerHTML=''; socials?.forEach(s=>{ const a=document.createElement('a'); a.href=s.url; a.target='_blank'; a.className='social-btn'; a.innerHTML=`${s.icon||'🔗'} ${s.name}`; grid.appendChild(a); }); } }
+window.saveAbout=async function(){ const text=document.getElementById('about-edit-text').value; if(supabase)await supabase.from('settings').upsert({key:'about',value:text}); loadAbout(); alert('تم الحفظ'); };
+async function loadAdminSocials(){ if(!supabase)return; const {data}=await supabase.from('socials').select('*'); const list=document.getElementById('socials-list'); if(!list)return; list.innerHTML=''; data?.forEach(s=>{ const div=document.createElement('div'); div.className='admin-item'; div.innerHTML=`<div>${s.icon} ${s.name}<br><small>${s.url}</small></div><button class="btn-delete" onclick="deleteSocial('${s.id}')">حذف</button>`; list.appendChild(div); }); }
+window.addSocial=async function(){ const name=document.getElementById('social-name').value.trim(); const url=document.getElementById('social-url').value.trim(); const icon=document.getElementById('social-icon').value.trim(); if(!name||!url){alert('املأ الحقول');return;} const social={id:Date.now().toString(),name,url,icon,created_at:new Date().toISOString()}; if(supabase)await supabase.from('socials').insert([social]); loadAdminSocials(); loadAbout(); };
+window.deleteSocial=async function(id){ if(!confirm('حذف الرابط؟'))return; if(supabase)await supabase.from('socials').delete().eq('id',id); loadAdminSocials(); loadAbout(); };
+// من نحن
+window.saveAboutUs=async function(){ const content=document.getElementById('aboutus-textarea').value; if(supabase)await supabase.from('settings').upsert({key:'about_us',value:content}); alert('✅ تم حفظ قسم من نحن'); };
+async function loadAboutUsText(){ if(!supabase)return; const {data}=await supabase.from('settings').select('value').eq('key','about_us').single(); const aboutDiv=document.getElementById('about-text'); if(aboutDiv && data?.value) aboutDiv.innerHTML=data.value; else if(aboutDiv && !data?.value) aboutDiv.innerHTML='<strong>دوبلكس شوب</strong><br>متجر يقدم خدمات رقمية متميزة.';
+   if(document.getElementById('aboutus-textarea')){ const existing=await supabase.from('settings').select('value').eq('key','about_us').single(); if(existing?.data)document.getElementById('aboutus-textarea').value=existing.data.value; else document.getElementById('aboutus-textarea').value='نحن في دوبلكس شوب نقدم أفضل المنتجات الرقمية بأسعار منافسة.';
+   } }
+window.adminLogin=function(){ const input=document.getElementById('admin-password-input').value; if(input===getAdminPass()){ document.getElementById('admin-login-view').style.display='none'; document.getElementById('admin-dashboard').style.display='block'; loadAdminProducts(); loadAdminOrders(); loadAdminReviews(); loadAdminSocials(); loadAboutUsText(); document.getElementById('about-edit-text').value=document.getElementById('about-text')?.innerText||''; } else { document.getElementById('admin-login-error').innerText='❌ كلمة المرور خاطئة'; } };
+window.adminTab=function(name){ document.querySelectorAll('.admin-panel').forEach(p=>p.style.display='none'); document.querySelectorAll('.admin-tab').forEach(t=>t.classList.remove('active')); document.getElementById(`panel-${name}`).style.display='block'; event.target.classList.add('active'); };
+window.changeAdminPass=function(){ const newPass=document.getElementById('new-admin-pass').value.trim(); if(newPass.length<4){alert('كلمة مرور قصيرة');return;} localStorage.setItem(ADMIN_PASS_KEY,newPass); alert('✅ تم التغيير'); };
+window.saveSupabaseConfig=function(){ const url=document.getElementById('sb-url-input').value.trim(); const key=document.getElementById('sb-key-input').value.trim(); if(!url||!key){alert('املأ الحقول');return;} localStorage.setItem('sb_url',url); localStorage.setItem('sb_key',key); SUPABASE_URL=url; SUPABASE_KEY=key; initSupabase(); alert('✅ تم الحفظ'); location.reload(); };
+function setupNav(){ document.querySelectorAll('.nav-link[data-page]').forEach(link=>{ link.addEventListener('click',(e)=>{ e.preventDefault(); const page=link.getAttribute('data-page'); document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active')); document.getElementById(`page-${page}`).classList.add('active'); link.classList.add('active'); if(window.innerWidth<=768) document.getElementById('sidebar')?.classList.remove('open'); }); }); document.getElementById('open-admin-btn')?.addEventListener('click',()=>document.getElementById('admin-overlay').classList.add('open')); document.getElementById('close-admin')?.addEventListener('click',()=>document.getElementById('admin-overlay').classList.remove('open')); document.getElementById('close-order')?.addEventListener('click',()=>document.getElementById('order-overlay').classList.remove('open')); document.getElementById('close-review')?.addEventListener('click',()=>document.getElementById('review-overlay').classList.remove('open')); document.getElementById('menuToggle')?.addEventListener('click',()=>document.getElementById('sidebar').classList.toggle('open')); document.addEventListener('click',(e)=>{ const notifContainer=document.querySelector('.notif-container'); const dropdown=document.getElementById('notif-dropdown'); if(notifContainer&&dropdown&&!notifContainer.contains(e.target)&&dropdown.classList.contains('open')) dropdown.classList.remove('open'); }); document.getElementById('notif-bell')?.addEventListener('click',(e)=>{ e.stopPropagation(); document.getElementById('notif-dropdown').classList.toggle('open'); }); }
+window.addEventListener('DOMContentLoaded',async()=>{ initSupabase(); setTimeout(()=>{ const ld=document.getElementById('loader'); if(ld)ld.style.display='none'; },1500); setupNav(); setupStars(); await Promise.all([loadAllPages(),loadStats(),loadAbout(),loadNotifications(),loadAboutUsText()]); if(document.getElementById('sb-url-input'))document.getElementById('sb-url-input').value=SUPABASE_URL; if(document.getElementById('sb-key-input'))document.getElementById('sb-key-input').value=SUPABASE_KEY; });
+const floatBtn=document.createElement('button'); floatBtn.innerHTML='⭐ أضف تقييم'; floatBtn.className='float-review-btn'; floatBtn.onclick=()=>document.getElementById('review-overlay').classList.add('open'); document.body.appendChild(floatBtn);
 </script>
 </body>
 </html>
+```
